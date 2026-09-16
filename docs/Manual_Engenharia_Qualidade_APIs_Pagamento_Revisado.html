@@ -1,0 +1,1771 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manual Operacional e Técnico: Engenharia de Qualidade em APIs de Pagamento</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    :root {
+      --primary: #0f172a;
+      --secondary: #2563eb;
+      --accent: #0ea5e9;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --warning: #d97706;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --bg: #ffffff;
+      --bg-alt: #f8fafc;
+      --border: #e2e8f0;
+      --code-bg: #0b1120;
+      --code-text: #e2e8f0;
+
+      /* Syntax Highlighting */
+      --syn-keyword: #f43f5e;
+      --syn-func: #38bdf8;
+      --syn-string: #4ade80;
+      --syn-number: #fb923c;
+      --syn-comment: #64748b;
+      --syn-type: #eab308;
+      --syn-var: #cbd5e1;
+      --syn-op: #f472b6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.65;
+      font-size: 11pt;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    /* Header / Cover */
+    .cover-header {
+      border-left: 8px solid var(--secondary);
+      padding: 28px 0 28px 32px;
+      margin-bottom: 40px;
+      background: linear-gradient(to right, rgba(37, 99, 235, 0.07), transparent);
+    }
+    .badge {
+      display: inline-block;
+      background: var(--secondary);
+      color: #fff;
+      font-size: 8.5pt;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+    .cover-title {
+      font-size: 26pt;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+    .cover-subtitle {
+      font-size: 13pt;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+    .cover-meta {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      font-size: 9.5pt;
+      color: var(--text-muted);
+    }
+    .cover-meta strong {
+      color: var(--primary);
+    }
+
+    /* Navigation TOC */
+    .toc {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 40px;
+    }
+    .toc-title {
+      font-size: 13pt;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 8px 24px;
+      list-style: none;
+    }
+    .toc-grid a {
+      color: var(--secondary);
+      text-decoration: none;
+      font-size: 10pt;
+      font-weight: 500;
+      transition: color 0.15s;
+    }
+    .toc-grid a:hover {
+      color: var(--accent);
+      text-decoration: underline;
+    }
+
+    /* Typography */
+    h2 {
+      font-size: 18pt;
+      font-weight: 800;
+      color: var(--primary);
+      margin-top: 52px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--border);
+    }
+    h3 {
+      font-size: 13pt;
+      font-weight: 700;
+      color: var(--secondary);
+      margin-top: 28px;
+      margin-bottom: 10px;
+    }
+    h4 {
+      font-size: 11pt;
+      font-weight: 600;
+      color: var(--primary);
+      margin-top: 18px;
+      margin-bottom: 6px;
+    }
+    p {
+      margin-bottom: 12px;
+      text-align: justify;
+    }
+    ul, ol {
+      margin-left: 24px;
+      margin-bottom: 14px;
+    }
+    li {
+      margin-bottom: 6px;
+    }
+
+    /* Callouts */
+    .callout {
+      padding: 14px 18px;
+      margin: 18px 0;
+      border-radius: 6px;
+      border-left: 4px solid;
+      background: var(--bg-alt);
+      font-size: 10pt;
+    }
+    .callout-info { border-color: var(--accent); background: #f0f9ff; }
+    .callout-warning { border-color: var(--warning); background: #fffbeb; }
+    .callout-danger { border-color: var(--danger); background: #fef2f2; }
+    .callout-success { border-color: var(--success); background: #f0fdf4; }
+    .callout-title {
+      font-weight: 700;
+      display: block;
+      margin-bottom: 4px;
+      color: var(--primary);
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 18px 0;
+      font-size: 9.5pt;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+    }
+    th {
+      background: var(--bg-alt);
+      color: var(--primary);
+      font-weight: 700;
+    }
+    tr:nth-child(even) td {
+      background: #fafbfc;
+    }
+
+    /* Diagram Containers */
+    .diagram-box {
+      background: var(--code-bg);
+      border: 1px solid #1e293b;
+      color: #38bdf8;
+      font-family: 'Fira Code', monospace;
+      font-size: 8.5pt;
+      line-height: 1.45;
+      padding: 16px;
+      border-radius: 6px;
+      margin: 16px 0;
+      white-space: pre;
+      overflow-x: auto;
+    }
+
+    /* Code Blocks */
+    .code-wrapper {
+      margin: 18px 0;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #1e293b;
+      background: var(--code-bg);
+    }
+    .code-header {
+      background: #0f172a;
+      color: #94a3b8;
+      font-family: 'Fira Code', monospace;
+      font-size: 8pt;
+      padding: 8px 14px;
+      border-bottom: 1px solid #1e293b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    pre {
+      padding: 16px;
+      overflow-x: auto;
+      font-family: 'Fira Code', monospace;
+      font-size: 8.5pt;
+      line-height: 1.5;
+      color: var(--code-text);
+    }
+    code {
+      font-family: 'Fira Code', monospace;
+      font-size: 9pt;
+      background: #f1f5f9;
+      color: #0f172a;
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+    pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+    }
+
+    /* Syntax Tokens */
+    .kw { color: var(--syn-keyword); font-weight: 600; }
+    .fn { color: var(--syn-func); }
+    .str { color: var(--syn-string); }
+    .num { color: var(--syn-number); }
+    .typ { color: var(--syn-type); }
+    .com { color: var(--syn-comment); font-style: italic; }
+    .var { color: var(--syn-var); }
+    .op { color: var(--syn-op); }
+
+    /* Math formulas */
+    .math-block {
+      background: #f8fafc;
+      border-left: 4px solid var(--secondary);
+      padding: 12px 16px;
+      margin: 14px 0;
+      font-family: 'Fira Code', monospace;
+      font-size: 9.5pt;
+    }
+
+    /* Print Setup */
+    @page {
+      size: A4;
+      margin: 18mm 14mm 18mm 14mm;
+    }
+    
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      body {
+        font-size: 9pt;
+        color: #000;
+        background: transparent;
+      }
+      .container {
+        max-width: 100%;
+        padding: 0;
+      }
+      .toc {
+        display: none;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+      .no-break {
+        page-break-inside: avoid;
+      }
+      .code-wrapper, table, .diagram-box, .callout {
+        page-break-inside: avoid;
+      }
+      pre {
+        font-size: 7.5pt;
+        line-height: 1.35;
+      }
+      h2 {
+        margin-top: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- COVER / HEADER -->
+  <header class="cover-header">
+    <span class="badge">Manual de Engenharia & Operação Diária &bull; FinTech</span>
+    <h1 class="cover-title">Guia Definitivo do QA Pleno em APIs de Pagamento</h1>
+    <p class="cover-subtitle">Operação em Produção e Staging: Automação Playwright, Banco de Dados Relacional, Observabilidade, Auditoria de PRs e Plano de Ação de 60 Dias</p>
+    
+    <div class="cover-meta">
+      <div><strong>Função no Time:</strong> QA Pleno &bull; SDET</div>
+      <div><strong>Domínio:</strong> Gateways, PSPs, Pix v2, Adquirência & PCI-DSS</div>
+      <div><strong>Stack Central:</strong> Playwright, TypeScript, PostgreSQL, Docker, Toxiproxy</div>
+      <div><strong>Foco de Atuação:</strong> Blindagem de CI/CD, Não-Regressão e Integridade Contábil</div>
+    </div>
+  </header>
+
+  <!-- TABLE OF CONTENTS -->
+  <nav class="toc">
+    <div class="toc-title">Índice Geral de Consulta Técnica</div>
+    <ul class="toc-grid">
+      <li><a href="#cap1">1. Fundamentos do Domínio de Pagamentos & Precisão Numérica</a></li>
+      <li><a href="#cap2">2. Redes, Protocolo HTTP & Rastreabilidade Distribuída</a></li>
+      <li><a href="#cap3">3. Autenticação, Tokens & Segurança (OWASP API Top 10)</a></li>
+      <li><a href="#cap4">4. Arquitetura do Framework Playwright com TypeScript</a></li>
+      <li><a href="#cap5">5. Cenários Críticos: Idempotência, Concorrência & Estornos</a></li>
+      <li><a href="#cap6">6. Split de Pagamentos & Regras Contábeis de Marketplace</a></li>
+      <li><a href="#cap7">7. Banco de Dados: Do Zero Absoluto à Auditoria de Pagamentos</a></li>
+      <li><a href="#cap8">8. Multi-Adquirência & Smart Routing com Fallback Resiliente</a></li>
+      <li><a href="#cap9">9. Validação de Contrato em Runtime com Zod</a></li>
+      <li><a href="#cap10">10. Automação E2E de Pix (BACEN API v2: Cobrança e Devolução)</a></li>
+      <li><a href="#cap11">11. Webhooks: HMAC-SHA256, Desordenamento & Retentativas</a></li>
+      <li><a href="#cap12">12. Timeouts, Quedas de Conexão & Engenharia de Caos (Toxiproxy)</a></li>
+      <li><a href="#cap13">13. Pipeline de CI/CD no GitHub Actions</a></li>
+      <li><a href="#cap14">14. Kit de Sobrevivência Diário: Debug, Observabilidade & Banco Seguro</a></li>
+      <li><a href="#cap15">15. Auditoria de PRs, Gestão de Massa & Plano Tático de 60 Dias</a></li>
+    </ul>
+  </nav>
+
+  <!-- CAPITULO 1 -->
+  <section id="cap1">
+    <h2>1. Fundamentos do Domínio de Pagamentos & Precisão Numérica</h2>
+    <p>Em sistemas financeiros, a automação de testes não se limita a asserções de status HTTP 200. Falhas lógicas em APIs de pagamento geram passivos contábeis diretos, perdas de liquidação, vulnerabilidades a fraudes e severas sanções aplicadas pelo Banco Central do Brasil (BACEN) e pelo PCI Security Standards Council.</p>
+
+    <h3>1.1 Os Atores do Arranjo de Pagamentos</h3>
+    <div class="diagram-box">[Portador do Cartão / Pagador]
+              │
+              ▼
+      [Gateway / PSP]  ───────►  [Motor de Risco / Antifraude]
+              │
+              ▼
+        [Adquirente]   (ex: Cielo, Stone, Rede, PagBank)
+              │
+              ▼
+         [Bandeira]    (ex: Visa, Mastercard, Elo)
+              │
+              ▼
+      [Banco Emissor] (ex: Nubank, Itaú, Bradesco)</div>
+
+    <ul>
+      <li><strong>Gateway:</strong> Integrador puramente técnico que recebe os dados da aplicação web/mobile, tokeniza, criptografa e distribui às pontas adquirentes sem liquidar valores.</li>
+      <li><strong>PSP (Payment Service Provider):</strong> Plataforma agregadora que unifica gateway, conciliação e liquidação financeira sob uma mesma licença contratual (ex: Pagar.me, Asaas, Stripe).</li>
+      <li><strong>Adquirente:</strong> Entidade credenciada pelas bandeiras para habilitar estabelecimentos comerciais e processar a captura e liquidação financeira das transações.</li>
+      <li><strong>Bandeira:</strong> Define as regras operacionais globais de segurança, roteamento, compensação e limites das transações.</li>
+      <li><strong>Emissor:</strong> Instituição financeira que concede o limite de crédito ou custodia a conta corrente do comprador, aprovando ou recusando a transação conforme saldo e risco comportamental.</li>
+    </ul>
+
+    <h3>1.2 Máquina de Estados Finitos (FSM) da Transação</h3>
+    <p>O ciclo de vida de uma cobrança com cartão é governado por uma <strong>Máquina de Estados Finitos</strong> com transições determinísticas. Um QA precisa testar exaustivamente não apenas as transições válidas, mas também a rejeição de transições inválidas (ex: tentar capturar uma transação já cancelada):</p>
+
+    <div class="diagram-box">[Iniciada] ──► [Autorizada] ──► [Capturada] ──► [Liquidada]
+     │              │                │
+     ▼              ▼                ▼
+ [Recusada]     [Cancelada]      [Estornada (Refund)]
+                                     │
+                                     ▼
+                            [Disputa / Chargeback]</div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Operação</th>
+          <th>Definição Técnica</th>
+          <th>Efeito Contábil no Sistema</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Autorização (Auth)</strong></td>
+          <td>Valida a integridade do cartão, limite disponível e aprovação no emissor.</td>
+          <td>Bloqueia o limite do portador. <em>Nenhum dinheiro trocou de mãos ainda.</em></td>
+        </tr>
+        <tr>
+          <td><strong>Captura (Capture)</strong></td>
+          <td>Confirmação da transação pelo lojista para efetivação contábil do débito.</td>
+          <td>Lança a compra na fatura do cliente e programa o recebível futuro do lojista.</td>
+        </tr>
+        <tr>
+          <td><strong>Cancelamento (Void)</strong></td>
+          <td>Anulação da reserva de saldo antes do fechamento diário do lote bancário.</td>
+          <td>Desfaz a pré-autorização imediatamente sem cobrança na fatura.</td>
+        </tr>
+        <tr>
+          <td><strong>Estorno (Refund)</strong></td>
+          <td>Devolução do valor após a transação já ter sido capturada e consolidada.</td>
+          <td>Dispara a liquidação reversa entre emissor e adquirente; pode ser total ou parcial.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>1.3 O Perigo do Ponto Flutuante (IEEE 754) em Sistemas Financeiros</h3>
+    <p>Processadores modernos representam frações decimais na memória através da norma binária IEEE 754. Operações triviais como <code>0.1 + 0.2</code> resultam na dízima binária finita <code>0.30000000000000004</code>. Em gateways que processam milhões de transações por hora, pequenas discrepâncias fracionárias acumulam rombos contábeis massivos.</p>
+
+    <div class="callout callout-danger">
+      <span class="callout-title">Regra Fundamental para Automação de APIs</span>
+      <strong>APIs de pagamento devem operar com inteiros na menor fração da moeda</strong> (ex: <code>amountInCents: 1000</code> para R$ 10,00) ou strings numéricas de precisão fixa. O framework de testes do QA deve validar que payloads contendo números decimais do tipo <code>10.99</code> sejam prontamente rejeitados com <code>400 Bad Request</code> ou <code>422 Unprocessable Entity</code>.
+    </div>
+  </section>
+
+  <!-- CAPITULO 2 -->
+  <section id="cap2" class="page-break">
+    <h2>2. Redes, Protocolo HTTP & Rastreabilidade Distribuída</h2>
+    <p>Para atuar com autonomia no dia a dia, o QA deve dominar a camada de transporte, a semântica rigorosa dos códigos HTTP e como auditar microsserviços via rastreamento distribuído.</p>
+
+    <h3>2.1 O Ciclo Físico de uma Chamada HTTP</h3>
+    <div class="diagram-box">[Playwright Test Process]
+        │ 1. Resolução DNS (api.pagamentos.com -> 192.0.2.1)
+        ▼
+[TCP 3-Way Handshake] (SYN -> SYN-ACK -> ACK)
+        │ 2. Handshake Criptográfico TLS 1.3 (Troca de chaves Diffie-Hellman, certificados mTLS)
+        ▼
+[Envio da Requisição HTTP Criptografada]
+        │ POST /v1/charges HTTP/1.1
+        │ Host: api.pagamentos.com
+        │ Authorization: Bearer eyJhbGciOi...
+        │ Idempotency-Key: b3c1-4820-91a1
+        │ X-Correlation-ID: 7a9e34b1-8409-42b8-9311-bfad6ce2e104
+        │ Content-Type: application/json
+        │ 
+        │ {"amountInCents": 10000, "currency": "BRL"}
+        ▼
+[API Gateway / Proxy Reverso (Kong / Nginx / ALB)]
+        │ Validação mTLS, Rate Limiting, Roteamento
+        ▼
+[Microsserviço de Pagamento]</div>
+
+    <h3>2.2 Matriz de Status Codes e Semântica de Negócio</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Status Code</th>
+          <th>Cenário Semântico em Pagamentos</th>
+          <th>Conduta Correta do QA na Automação</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>400 Bad Request</code></td>
+          <td>Payload mal formatado, sintaxe JSON corrompida ou tipos de dados inválidos.</td>
+          <td>Asserir quando tipos primitivos estiverem violados (ex: string em campo numérico).</td>
+        </tr>
+        <tr>
+          <td><code>422 Unprocessable Entity</code></td>
+          <td>Sintaxe válida, mas violação de regra de negócio (ex: data de expiração no passado, estorno maior que saldo).</td>
+          <td>Asserir mensagem de erro amigável e código de erro de domínio específico.</td>
+        </tr>
+        <tr>
+          <td><code>401 Unauthorized</code></td>
+          <td>Token ausente, inválido ou expirado.</td>
+          <td>Validar que nenhum detalhe de infraestrutura vaze no body da resposta.</td>
+        </tr>
+        <tr>
+          <td><code>403 Forbidden</code></td>
+          <td>Autenticado com sucesso, mas sem autorização de acesso ao recurso solicitado.</td>
+          <td>Testar cenários de permissão e isolamento de tenants (Lojista A acessando recurso B).</td>
+        </tr>
+        <tr>
+          <td><code>409 Conflict</code></td>
+          <td>Conflito de estado do recurso (ex: reutilizar <code>Idempotency-Key</code> com payload modificado).</td>
+          <td>Validar que a transação original seja preservada intacta sem alteração de valores.</td>
+        </tr>
+        <tr>
+          <td><code>502 / 504 Gateway Error</code></td>
+          <td>Instabilidade ou timeout ao conectar com a adquirente ou autorizador externo.</td>
+          <td>Validar que o gateway ative políticas de retentativa, fallback ou circuito aberto (Circuit Breaker).</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>2.3 Rastreabilidade Distribuída (Distributed Tracing)</h3>
+    <p>Em ambientes de microsserviços, quando um pagamento falha, o QA precisa auditar exatamente onde o fluxo foi interrompido. Toda requisição enviada pelo framework de testes automatizados deve injetar headers de correlação padronizados:</p>
+    <ul>
+      <li><code>X-Correlation-ID</code> ou <code>X-Request-ID</code>: Identificador único UUIDv4 que deve ser propagado por todos os microsserviços internos e retornado no cabeçalho de resposta HTTP.</li>
+      <li><code>traceparent</code> (Padrão W3C Trace Context): Permite correlacionar spans de observabilidade no OpenTelemetry, Datadog ou Jaeger.</li>
+    </ul>
+  </section>
+
+  <!-- CAPITULO 3 -->
+  <section id="cap3" class="page-break">
+    <h2>3. Autenticação, Tokens & Segurança (OWASP API Top 10)</h2>
+
+    <h3>3.1 Anatomia e Vulnerabilidades de JWT em APIs Financeiras</h3>
+    <p>JSON Web Tokens operam no modelo <em>stateless</em> estruturados em <code>HEADER.PAYLOAD.SIGNATURE</code>:</p>
+    <div class="diagram-box">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
+eyJzdWIiOiJtZXJjaGFudF8xMjMiLCJyb2xlcyI6WyJjcmVkaXRfY2FyZF9jaGFyZ2UiXSwiZXhwIjoxNzI2MzM1NjAwfQ.
+Gk9YQ8ZvxG-W_n3J1Z8N3W5Xy98P_b7rK1h3Vw5X0Lk</div>
+
+    <div class="callout callout-warning">
+      <span class="callout-title">Atenção Crítica aos Riscos de Criptografia</span>
+      Base64 não é criptografia. Qualquer agente intermediário decodifica o payload de um JWT em milissegundos. É estritamente proibido incluir CVV, senhas ou dados bancários em claims de tokens.
+    </div>
+
+    <h3>3.2 Matriz de Testes OWASP API Security para Pagamentos</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Vulnerabilidade OWASP</th>
+          <th>Cenário no Domínio de Pagamentos</th>
+          <th>Estratégia de Teste Automatizado com Playwright</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>BOLA / IDOR (API1:2023)</strong></td>
+          <td>Lojista A tenta consultar (<code>GET /v1/charges/{id}</code>) ou estornar transações pertencentes ao Lojista B.</td>
+          <td>Criar transação com credenciais do Lojista A e tentar acessá-la via token do Lojista B. Esperado: <code>403 Forbidden</code> ou <code>404 Not Found</code>.</td>
+        </tr>
+        <tr>
+          <td><strong>Broken Authentication (API2:2023)</strong></td>
+          <td>API aceita tokens expirados, tokens assinados com o algoritmo <code>none</code> ou assinaturas adulteradas.</td>
+          <td>Gerar tokens forjados com segredos inválidos e validar rejeição obrigatória com status <code>401 Unauthorized</code>.</td>
+        </tr>
+        <tr>
+          <td><strong>Mass Assignment (API6:2023)</strong></td>
+          <td>Injeção de campos internos privilegiados no payload de criação (ex: <code>{"status": "CAPTURED", "fee": 0}</code>).</td>
+          <td>Enviar campos administrativos via DTO. O gateway deve ignorá-los e iniciar o pagamento exclusivamente no estado <code>PENDING</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- CAPITULO 4 -->
+  <section id="cap4" class="page-break">
+    <h2>4. Arquitetura do Framework Playwright com TypeScript</h2>
+    <p>O design pattern central adota o padrão <strong>Service Objects</strong>, desacoplando completamente a mecânica das requisições HTTP da camada de lógica de testes, com injeção de dependência nativa através de <strong>Fixtures</strong>.</p>
+
+    <h3>4.1 Estrutura de Diretórios Padronizada</h3>
+    <div class="diagram-box">api-automation-framework/
+├── .github/workflows/ci.yml     # Pipeline de execução contínua
+├── src/
+│   ├── clients/                  # Service Objects (camada HTTP)
+│   │   ├── BaseClient.ts
+│   │   ├── AuthClient.ts
+│   │   └── PaymentClient.ts
+│   ├── database/                 # Módulo de Banco de Dados
+│   │   ├── dbConnection.ts       # Pool de conexões PostgreSQL
+│   │   └── queries/              # Consultas SQL reutilizáveis
+│   ├── factories/                # Geração dinâmica de massa de dados (Faker)
+│   │   └── PaymentFactory.ts
+│   ├── fixtures/                 # Injeção de dependências do Playwright
+│   │   └── apiFixtures.ts
+│   ├── models/                   # Tipagens estritas e DTOs
+│   │   └── payment.types.ts
+│   ├── schemas/                  # Contratos em runtime com Zod
+│   │   └── payment.schema.ts
+│   └── services/                 # Recebedores mock para Webhooks e falhas
+├── tests/
+│   ├── payments/
+│   ├── database/                 # Testes de auditoria em banco
+│   ├── pix/
+│   └── webhooks/
+├── playwright.config.ts
+├── tsconfig.json
+└── package.json</div>
+
+    <h3>4.2 Modelagem de Tipos e DTOs (Data Transfer Objects)</h3>
+    <div class="code-wrapper">
+      <div class="code-header"><span>src/models/payment.types.ts</span><span>TypeScript</span></div>
+      <pre><code><span class="kw">export type</span> <span class="typ">PaymentMethod</span> <span class="op">=</span> <span class="str">'CREDIT_CARD'</span> <span class="op">|</span> <span class="str">'PIX'</span> <span class="op">|</span> <span class="str">'BOLETO'</span>;
+
+<span class="kw">export type</span> <span class="typ">PaymentStatus</span> <span class="op">=</span> 
+  <span class="op">|</span> <span class="str">'PENDING'</span> 
+  <span class="op">|</span> <span class="str">'AUTHORIZED'</span> 
+  <span class="op">|</span> <span class="str">'CAPTURED'</span> 
+  <span class="op">|</span> <span class="str">'FAILED'</span> 
+  <span class="op">|</span> <span class="str">'VOIDED'</span> 
+  <span class="op">|</span> <span class="str">'REFUNDED'</span>;
+
+<span class="kw">export interface</span> <span class="typ">CardDetailsDTO</span> {
+  <span class="var">number</span><span class="op">:</span> <span class="typ">string</span>;
+  <span class="var">holderName</span><span class="op">:</span> <span class="typ">string</span>;
+  <span class="var">expirationMonth</span><span class="op">:</span> <span class="typ">string</span>;
+  <span class="var">expirationYear</span><span class="op">:</span> <span class="typ">string</span>;
+  <span class="var">cvv</span><span class="op">:</span> <span class="typ">string</span>;
+}
+
+<span class="kw">export interface</span> <span class="typ">SplitRuleDTO</span> {
+  <span class="var">recipientId</span><span class="op">:</span> <span class="typ">string</span>;
+  <span class="var">percentage</span><span class="op">:</span> <span class="typ">number</span>;
+  <span class="var">chargeProcessingFee</span><span class="op">:</span> <span class="typ">boolean</span>;
+  <span class="var">liableForChargeback</span><span class="op">:</span> <span class="typ">boolean</span>;
+}
+
+<span class="kw">export interface</span> <span class="typ">CreatePaymentDTO</span> {
+  <span class="var">amountInCents</span><span class="op">:</span> <span class="typ">number</span>; <span class="com">// Inteiro: R$ 10,00 = 1000 centavos</span>
+  <span class="var">currency</span><span class="op">:</span> <span class="str">'BRL'</span> <span class="op">|</span> <span class="str">'USD'</span>;
+  <span class="var">customerId</span><span class="op">:</span> <span class="typ">string</span>;
+  <span class="var">paymentMethod</span><span class="op">:</span> <span class="typ">PaymentMethod</span>;
+  <span class="var">card</span><span class="op">?:</span> <span class="typ">CardDetailsDTO</span>;
+  <span class="var">splitRules</span><span class="op">?:</span> <span class="typ">SplitRuleDTO</span>[];
+  <span class="var">metadata</span><span class="op">?:</span> <span class="typ">Record</span><span class="op">&lt;</span><span class="typ">string</span>, <span class="typ">string</span><span class="op">&gt;</span>;
+}
+
+<span class="kw">export interface</span> <span class="typ">RefundRequestDTO</span> {
+  <span class="var">amountInCents</span><span class="op">:</span> <span class="typ">number</span>;
+}</code></pre>
+    </div>
+
+    <h3>4.3 Service Object Pattern: BaseClient e PaymentClient</h3>
+    <div class="code-wrapper">
+      <div class="code-header"><span>src/clients/BaseClient.ts</span><span>TypeScript</span></div>
+      <pre><code><span class="kw">import</span> { <span class="typ">APIRequestContext</span>, <span class="typ">APIResponse</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+<span class="kw">import</span> { <span class="var">randomUUID</span> } <span class="kw">from</span> <span class="str">'node:crypto'</span>;
+
+<span class="kw">export abstract class</span> <span class="typ">BaseClient</span> {
+  <span class="kw">protected constructor</span>(
+    <span class="kw">protected readonly</span> <span class="var">request</span><span class="op">:</span> <span class="typ">APIRequestContext</span>,
+    <span class="kw">protected readonly</span> <span class="var">baseURL</span><span class="op">:</span> <span class="typ">string</span>
+  ) {}
+
+  <span class="kw">protected async</span> <span class="fn">get</span>(<span class="var">endpoint</span><span class="op">:</span> <span class="typ">string</span>, <span class="var">headers</span><span class="op">?:</span> <span class="typ">Record</span><span class="op">&lt;</span><span class="typ">string</span>, <span class="typ">string</span><span class="op">&gt;</span>)<span class="op">:</span> <span class="typ">Promise</span><span class="op">&lt;</span><span class="typ">APIResponse</span><span class="op">&gt;</span> {
+    <span class="kw">return this</span>.<span class="var">request</span>.<span class="fn">get</span>(<span class="str">`<span class="op">${</span><span class="kw">this</span>.<span class="var">baseURL</span><span class="op">}${</span><span class="var">endpoint</span><span class="op">}</span>`</span>, {
+      <span class="var">headers</span><span class="op">:</span> {
+        <span class="str">'X-Correlation-ID'</span><span class="op">:</span> <span class="fn">randomUUID</span>(),
+        <span class="op">...</span><span class="var">headers</span>,
+      },
+    });
+  }
+
+  <span class="kw">protected async</span> <span class="fn">post</span>(
+    <span class="var">endpoint</span><span class="op">:</span> <span class="typ">string</span>,
+    <span class="var">data</span><span class="op">:</span> <span class="typ">unknown</span>,
+    <span class="var">headers</span><span class="op">?:</span> <span class="typ">Record</span><span class="op">&lt;</span><span class="typ">string</span>, <span class="typ">string</span><span class="op">&gt;</span>
+  )<span class="op">:</span> <span class="typ">Promise</span><span class="op">&lt;</span><span class="typ">APIResponse</span><span class="op">&gt;</span> {
+    <span class="kw">return this</span>.<span class="var">request</span>.<span class="fn">post</span>(<span class="str">`<span class="op">${</span><span class="kw">this</span>.<span class="var">baseURL</span><span class="op">}${</span><span class="var">endpoint</span><span class="op">}</span>`</span>, {
+      <span class="var">data</span>,
+      <span class="var">headers</span><span class="op">:</span> {
+        <span class="str">'Content-Type'</span><span class="op">:</span> <span class="str">'application/json'</span>,
+        <span class="str">'X-Correlation-ID'</span><span class="op">:</span> <span class="fn">randomUUID</span>(),
+        <span class="op">...</span><span class="var">headers</span>,
+      },
+    });
+  }
+}</code></pre>
+    </div>
+
+    <div class="code-wrapper">
+      <div class="code-header"><span>src/clients/PaymentClient.ts</span><span>TypeScript</span></div>
+      <pre><code><span class="kw">import</span> { <span class="typ">APIRequestContext</span>, <span class="typ">APIResponse</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+<span class="kw">import</span> { <span class="typ">BaseClient</span> } <span class="kw">from</span> <span class="str">'./BaseClient'</span>;
+<span class="kw">import</span> { <span class="typ">CreatePaymentDTO</span>, <span class="typ">RefundRequestDTO</span> } <span class="kw">from</span> <span class="str">'../models/payment.types'</span>;
+
+<span class="kw">export class</span> <span class="typ">PaymentClient</span> <span class="kw">extends</span> <span class="typ">BaseClient</span> {
+  <span class="kw">constructor</span>(<span class="var">request</span><span class="op">:</span> <span class="typ">APIRequestContext</span>, <span class="var">baseURL</span><span class="op">:</span> <span class="typ">string</span>) {
+    <span class="kw">super</span>(<span class="var">request</span>, <span class="var">baseURL</span>);
+  }
+
+  <span class="kw">async</span> <span class="fn">createPayment</span>(
+    <span class="var">payload</span><span class="op">:</span> <span class="typ">CreatePaymentDTO</span>,
+    <span class="var">options</span><span class="op">?:</span> { <span class="var">idempotencyKey</span><span class="op">?:</span> <span class="typ">string</span>; <span class="var">token</span><span class="op">?:</span> <span class="typ">string</span> }
+  )<span class="op">:</span> <span class="typ">Promise</span><span class="op">&lt;</span><span class="typ">APIResponse</span><span class="op">&gt;</span> {
+    <span class="kw">const</span> <span class="var">headers</span><span class="op">:</span> <span class="typ">Record</span><span class="op">&lt;</span><span class="typ">string</span>, <span class="typ">string</span><span class="op">&gt;</span> <span class="op">=</span> {};
+    <span class="kw">if</span> (<span class="var">options</span><span class="op">?.</span><span class="var">idempotencyKey</span>) {
+      <span class="var">headers</span>[<span class="str">'Idempotency-Key'</span>] <span class="op">=</span> <span class="var">options</span>.<span class="var">idempotencyKey</span>;
+    }
+    <span class="kw">if</span> (<span class="var">options</span><span class="op">?.</span><span class="var">token</span>) {
+      <span class="var">headers</span>[<span class="str">'Authorization'</span>] <span class="op">=</span> <span class="str">`Bearer <span class="op">${</span><span class="var">options</span>.<span class="var">token</span><span class="op">}</span>`</span>;
+    }
+    <span class="kw">return this</span>.<span class="fn">post</span>(<span class="str">'/v1/payments'</span>, <span class="var">payload</span>, <span class="var">headers</span>);
+  }
+
+  <span class="kw">async</span> <span class="fn">capture</span>(<span class="var">id</span><span class="op">:</span> <span class="typ">string</span>, <span class="var">token</span><span class="op">:</span> <span class="typ">string</span>, <span class="var">amountInCents</span><span class="op">?:</span> <span class="typ">number</span>)<span class="op">:</span> <span class="typ">Promise</span><span class="op">&lt;</span><span class="typ">APIResponse</span><span class="op">&gt;</span> {
+    <span class="kw">return this</span>.<span class="fn">post</span>(<span class="str">`/v1/payments/<span class="op">${</span><span class="var">id</span><span class="op">}</span>/capture`</span>, { <span class="var">amountInCents</span> }, {
+      <span class="var">Authorization</span><span class="op">:</span> <span class="str">`Bearer <span class="op">${</span><span class="var">token</span><span class="op">}</span>`</span>,
+    });
+  }
+
+  <span class="kw">async</span> <span class="fn">refund</span>(<span class="var">id</span><span class="op">:</span> <span class="typ">string</span>, <span class="var">payload</span><span class="op">:</span> <span class="typ">RefundRequestDTO</span>, <span class="var">token</span><span class="op">:</span> <span class="typ">string</span>)<span class="op">:</span> <span class="typ">Promise</span><span class="op">&lt;</span><span class="typ">APIResponse</span><span class="op">&gt;</span> {
+    <span class="kw">return this</span>.<span class="fn">post</span>(<span class="str">`/v1/payments/<span class="op">${</span><span class="var">id</span><span class="op">}</span>/refund`</span>, <span class="var">payload</span>, {
+      <span class="var">Authorization</span><span class="op">:</span> <span class="str">`Bearer <span class="op">${</span><span class="var">token</span><span class="op">}</span>`</span>,
+    });
+  }
+}</code></pre>
+    </div>
+
+    <h3>4.4 Injeção de Dependências com Custom Fixtures</h3>
+    <div class="code-wrapper">
+      <div class="code-header"><span>src/fixtures/apiFixtures.ts</span><span>TypeScript</span></div>
+      <pre><code><span class="kw">import</span> { <span class="var">test</span> <span class="kw">as</span> <span class="var">base</span>, <span class="var">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+<span class="kw">import</span> { <span class="typ">PaymentClient</span> } <span class="kw">from</span> <span class="str">'../clients/PaymentClient'</span>;
+<span class="kw">import</span> { <span class="typ">Pool</span> } <span class="kw">from</span> <span class="str">'pg'</span>;
+
+<span class="kw">type</span> <span class="typ">PaymentFixtures</span> <span class="op">=</span> {
+  <span class="var">paymentClient</span><span class="op">:</span> <span class="typ">PaymentClient</span>;
+  <span class="var">merchantToken</span><span class="op">:</span> <span class="typ">string</span>;
+  <span class="var">db</span><span class="op">:</span> <span class="typ">Pool</span>;
+};
+
+<span class="kw">export const</span> <span class="var">test</span> <span class="op">=</span> <span class="var">base</span>.<span class="fn">extend</span><span class="op">&lt;</span><span class="typ">PaymentFixtures</span><span class="op">&gt;</span>({
+  <span class="var">merchantToken</span><span class="op">:</span> <span class="kw">async</span> ({ <span class="var">request</span> }, <span class="var">use</span>) <span class="op">=&gt;</span> {
+    <span class="kw">const</span> <span class="var">authRes</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">request</span>.<span class="fn">post</span>(<span class="str">`<span class="op">${</span><span class="var">process</span>.<span class="var">env</span>.<span class="var">API_BASE_URL</span><span class="op">}</span>/oauth/token`</span>, {
+      <span class="var">data</span><span class="op">:</span> {
+        <span class="var">grant_type</span><span class="op">:</span> <span class="str">'client_credentials'</span>,
+        <span class="var">client_id</span><span class="op">:</span> <span class="var">process</span>.<span class="var">env</span>.<span class="var">CLIENT_ID</span>,
+        <span class="var">client_secret</span><span class="op">:</span> <span class="var">process</span>.<span class="var">env</span>.<span class="var">CLIENT_SECRET</span>,
+      },
+    });
+    <span class="fn">expect</span>(<span class="var">authRes</span>.<span class="fn">status</span>()).<span class="fn">toBe</span>(<span class="num">200</span>);
+    <span class="kw">const</span> { <span class="var">access_token</span> } <span class="op">=</span> <span class="kw">await</span> <span class="var">authRes</span>.<span class="fn">json</span>();
+    <span class="kw">await</span> <span class="fn">use</span>(<span class="var">access_token</span>);
+  },
+
+  <span class="var">paymentClient</span><span class="op">:</span> <span class="kw">async</span> ({ <span class="var">request</span> }, <span class="var">use</span>) <span class="op">=&gt;</span> {
+    <span class="kw">const</span> <span class="var">client</span> <span class="op">=</span> <span class="kw">new</span> <span class="typ">PaymentClient</span>(<span class="var">request</span>, <span class="var">process</span>.<span class="var">env</span>.<span class="var">API_BASE_URL</span> <span class="op">||</span> <span class="str">'http://localhost:3000'</span>);
+    <span class="kw">await</span> <span class="fn">use</span>(<span class="var">client</span>);
+  },
+
+  <span class="var">db</span><span class="op">:</span> <span class="kw">async</span> ({}, <span class="var">use</span>) <span class="op">=&gt;</span> {
+    <span class="kw">const</span> <span class="var">pool</span> <span class="op">=</span> <span class="kw">new</span> <span class="typ">Pool</span>({ <span class="var">connectionString</span><span class="op">:</span> <span class="var">process</span>.<span class="var">env</span>.<span class="var">DATABASE_URL</span> });
+    <span class="kw">await</span> <span class="fn">use</span>(<span class="var">pool</span>);
+    <span class="kw">await</span> <span class="var">pool</span>.<span class="fn">end</span>();
+  },
+});
+
+<span class="kw">export</span> { <span class="var">expect</span> };</code></pre>
+    </div>
+  </section>
+
+  <!-- CAPITULO 5 -->
+  <section id="cap5" class="page-break">
+    <h2>5. Cenários Críticos: Idempotência, Concorrência & Estornos</h2>
+
+    <h3>5.1 Idempotência: Replays & Prevenção de Adulteração</h3>
+    <p>O cabeçalho <code>Idempotency-Key</code> garante que falhas de rede no cliente não resultem em cobranças duplicadas ao reenviar a mesma transação. Adicionalmente, a reutilização de uma chave pré-existente com corpo adulterado deve resultar em conflito explícito.</p>
+
+    <div class="code-wrapper">
+      <div class="code-header"><span>tests/payments/idempotency.spec.ts</span><span>TypeScript</span></div>
+      <pre><code><span class="kw">import</span> { <span class="var">test</span>, <span class="var">expect</span> } <span class="kw">from</span> <span class="str">'../../src/fixtures/apiFixtures'</span>;
+<span class="kw">import</span> { <span class="typ">PaymentFactory</span> } <span class="kw">from</span> <span class="str">'../../src/factories/PaymentFactory'</span>;
+<span class="kw">import</span> { <span class="var">faker</span> } <span class="kw">from</span> <span class="str">'@faker-js/faker'</span>;
+
+<span class="var">test</span>.<span class="fn">describe</span>(<span class="str">'Validação de Idempotência em Transações'</span>, () <span class="op">=&gt;</span> {
+  <span class="var">test</span>(<span class="str">'deve retornar a mesma transação original sem duplicar cobrança'</span>, <span class="kw">async</span> ({
+    <span class="var">paymentClient</span>,
+    <span class="var">merchantToken</span>,
+  }) <span class="op">=&gt;</span> {
+    <span class="kw">const</span> <span class="var">idempotencyKey</span> <span class="op">=</span> <span class="var">faker</span>.<span class="var">string</span>.<span class="fn">uuid</span>();
+    <span class="kw">const</span> <span class="var">payload</span> <span class="op">=</span> <span class="typ">PaymentFactory</span>.<span class="fn">createValidCreditCardPayload</span>();
+
+    <span class="com">// 1ª Requisição</span>
+    <span class="kw">const</span> <span class="var">res1</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">paymentClient</span>.<span class="fn">createPayment</span>(<span class="var">payload</span>, { <span class="var">idempotencyKey</span>, <span class="var">token</span><span class="op">:</span> <span class="var">merchantToken</span> });
+    <span class="fn">expect</span>(<span class="var">res1</span>.<span class="fn">status</span>()).<span class="fn">toBe</span>(<span class="num">201</span>);
+    <span class="kw">const</span> <span class="var">body1</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">res1</span>.<span class="fn">json</span>();
+
+    <span class="com">// 2ª Requisição (Replay idêntico)</span>
+    <span class="kw">const</span> <span class="var">res2</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">paymentClient</span>.<span class="fn">createPayment</span>(<span class="var">payload</span>, { <span class="var">idempotencyKey</span>, <span class="var">token</span><span class="op">:</span> <span class="var">merchantToken</span> });
+    <span class="fn">expect</span>([<span class="num">200</span>, <span class="num">201</span>]).<span class="fn">toContain</span>(<span class="var">res2</span>.<span class="fn">status</span>());
+    <span class="kw">const</span> <span class="var">body2</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">res2</span>.<span class="fn">json</span>();
+
+    <span class="fn">expect</span>(<span class="var">body2</span>.<span class="var">id</span>).<span class="fn">toBe</span>(<span class="var">body1</span>.<span class="var">id</span>);
+  });
+
+  <span class="var">test</span>(<span class="str">'deve retornar 409 Conflict ao reutilizar chave com payload adulterado'</span>, <span class="kw">async</span> ({
+    <span class="var">paymentClient</span>,
+    <span class="var">merchantToken</span>,
+  }) <span class="op">=&gt;</span> {
+    <span class="kw">const</span> <span class="var">idempotencyKey</span> <span class="op">=</span> <span class="var">faker</span>.<span class="var">string</span>.<span class="fn">uuid</span>();
+    <span class="kw">const</span> <span class="var">original</span> <span class="op">=</span> <span class="typ">PaymentFactory</span>.<span class="fn">createValidCreditCardPayload</span>({ <span class="var">amountInCents</span><span class="op">:</span> <span class="num">5000</span> });
+    <span class="kw">const</span> <span class="var">tampered</span> <span class="op">=</span> <span class="typ">PaymentFactory</span>.<span class="fn">createValidCreditCardPayload</span>({ <span class="var">amountInCents</span><span class="op">:</span> <span class="num">9900</span> });
+
+    <span class="kw">await</span> <span class="var">paymentClient</span>.<span class="fn">createPayment</span>(<span class="var">original</span>, { <span class="var">idempotencyKey</span>, <span class="var">token</span><span class="op">:</span> <span class="var">merchantToken</span> });
+    <span class="kw">const</span> <span class="var">resTampered</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">paymentClient</span>.<span class="fn">createPayment</span>(<span class="var">tampered</span>, { <span class="var">idempotencyKey</span>, <span class="var">token</span><span class="op">:</span> <span class="var">merchantToken</span> });
+
+    <span class="fn">expect</span>([<span class="num">409</span>, <span class="num">422</span>]).<span class="fn">toContain</span>(<span class="var">resTampered</span>.<span class="fn">status</span>());
+  });
+});</code></pre>
+    </div>
+
+    <h3>5.2 Teste de Concorrência e Double-Spending via Promise.all</h3>
+    <p>Simulação de ataque de corrida (<em>Race Condition</em>) disparando múltiplas requisições simultâneas no mesmo milissegundo pelo Event Loop do Node.js:</p>
+
+    <div class="code-wrapper">
+      <div class="code-header"><span>tests/payments/concurrency.spec.ts</span><span>TypeScript</span></div>
+      <pre><code><span class="kw">import</span> { <span class="var">test</span>, <span class="var">expect</span> } <span class="kw">from</span> <span class="str">'../../src/fixtures/apiFixtures'</span>;
+<span class="kw">import</span> { <span class="typ">PaymentFactory</span> } <span class="kw">from</span> <span class="str">'../../src/factories/PaymentFactory'</span>;
+
+<span class="var">test</span>(<span class="str">'não deve permitir cobrança dupla ao disparar requisições concorrentes no mesmo milissegundo'</span>, <span class="kw">async</span> ({
+  <span class="var">paymentClient</span>,
+  <span class="var">merchantToken</span>,
+}) <span class="op">=&gt;</span> {
+  <span class="kw">const</span> <span class="var">payload</span> <span class="op">=</span> <span class="typ">PaymentFactory</span>.<span class="fn">createValidCreditCardPayload</span>();
+  <span class="kw">const</span> <span class="var">fixedKey</span> <span class="op">=</span> <span class="str">`race-<span class="op">${</span><span class="typ">Date</span>.<span class="fn">now</span>()<span class="op">}</span>`</span>;
+
+  <span class="com">// Dispara 5 requisições em paralelo real</span>
+  <span class="kw">const</span> <span class="var">promises</span> <span class="op">=</span> <span class="typ">Array</span>.<span class="fn">from</span>({ <span class="var">length</span><span class="op">:</span> <span class="num">5</span> }).<span class="fn">map</span>(() <span class="op">=&gt;</span>
+    <span class="var">paymentClient</span>.<span class="fn">createPayment</span>(<span class="var">payload</span>, { <span class="var">idempotencyKey</span><span class="op">:</span> <span class="var">fixedKey</span>, <span class="var">token</span><span class="op">:</span> <span class="var">merchantToken</span> })
+  );
+
+  <span class="kw">const</span> <span class="var">responses</span> <span class="op">=</span> <span class="kw">await</span> <span class="typ">Promise</span>.<span class="fn">all</span>(<span class="var">promises</span>);
+  <span class="kw">const</span> <span class="var">statuses</span> <span class="op">=</span> <span class="var">responses</span>.<span class="fn">map</span>((<span class="var">r</span>) <span class="op">=&gt;</span> <span class="var">r</span>.<span class="fn">status</span>());
+
+  <span class="com">// Invariante: Estritamente UMA requisição pode retornar 201 Created</span>
+  <span class="kw">const</span> <span class="var">creations</span> <span class="op">=</span> <span class="var">statuses</span>.<span class="fn">filter</span>((<span class="var">s</span>) <span class="op">===</span> <span class="num">201</span>);
+  <span class="fn">expect</span>(<span class="var">creations</span>.<span class="var">length</span>).<span class="fn">toBe</span>(<span class="num">1</span>);
+
+  <span class="com">// As demais devem ser idempotentes (200) ou bloqueadas por lock concorrente (409)</span>
+  <span class="kw">const</span> <span class="var">allSafe</span> <span class="op">=</span> <span class="var">statuses</span>.<span class="fn">every</span>((<span class="var">s</span>) <span class="op">=&gt;</span> [<span class="num">200</span>, <span class="num">201</span>, <span class="num">409</span>].<span class="fn">includes</span>(<span class="var">s</span>));
+  <span class="fn">expect</span>(<span class="var">allSafe</span>).<span class="fn">toBe</span>(<span class="num">true</span>);
+});</code></pre>
+    </div>
+
+    <h3>5.3 Estornos Parciais Cumulativos (Prevenção de Saldo Negativo)</h3>
+    <p>Garante que a soma dos estornos parciais nunca exceda o montante total capturado originalmente.</p>
+
+    <div class="code-wrapper">
+      <div class="code-header"><span>tests/payments/cumulative-refund.spec.ts</span><span>TypeScript</span></div>
+      <pre><code><span class="kw">import</span> { <span class="var">test</span>, <span class="var">expect</span> } <span class="kw">from</span> <span class="str">'../../src/fixtures/apiFixtures'</span>;
+<span class="kw">import</span> { <span class="typ">PaymentFactory</span> } <span class="kw">from</span> <span class="str">'../../src/factories/PaymentFactory'</span>;
+
+<span class="var">test</span>(<span class="str">'deve permitir estornos até o teto capturado e rejeitar excedente com 422'</span>, <span class="kw">async</span> ({
+  <span class="var">paymentClient</span>,
+  <span class="var">merchantToken</span>,
+}) <span class="op">=&gt;</span> {
+  <span class="com">// 1. Cria e captura cobrança de R$ 100,00 (10000 centavos)</span>
+  <span class="kw">const</span> <span class="var">payload</span> <span class="op">=</span> <span class="typ">PaymentFactory</span>.<span class="fn">createValidCreditCardPayload</span>({ <span class="var">amountInCents</span><span class="op">:</span> <span class="num">10000</span> });
+  <span class="kw">const</span> <span class="var">authRes</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">paymentClient</span>.<span class="fn">createPayment</span>(<span class="var">payload</span>, { <span class="var">token</span><span class="op">:</span> <span class="var">merchantToken</span> });
+  <span class="kw">const</span> { <span class="var">id</span> } <span class="op">=</span> <span class="kw">await</span> <span class="var">authRes</span>.<span class="fn">json</span>();
+  <span class="kw">await</span> <span class="var">paymentClient</span>.<span class="fn">capture</span>(<span class="var">id</span>, <span class="var">merchantToken</span>, <span class="num">10000</span>);
+
+  <span class="com">// 2. Primeiro estorno parcial: R$ 60,00 (6000 centavos)</span>
+  <span class="kw">const</span> <span class="var">refund1</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">paymentClient</span>.<span class="fn">refund</span>(<span class="var">id</span>, { <span class="var">amountInCents</span><span class="op">:</span> <span class="num">6000</span> }, <span class="var">merchantToken</span>);
+  <span class="fn">expect</span>(<span class="var">refund1</span>.<span class="fn">status</span>()).<span class="fn">toBe</span>(<span class="num">200</span>);
+
+  <span class="com">// 3. Segundo estorno parcial: R$ 40,00 (4000 centavos - atinge 100% do saldo)</span>
+  <span class="kw">const</span> <span class="var">refund2</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">paymentClient</span>.<span class="fn">refund</span>(<span class="var">id</span>, { <span class="var">amountInCents</span><span class="op">:</span> <span class="num">4000</span> }, <span class="var">merchantToken</span>);
+  <span class="fn">expect</span>(<span class="var">refund2</span>.<span class="fn">status</span>()).<span class="fn">toBe</span>(<span class="num">200</span>);
+
+  <span class="com">// 4. Terceiro estorno de R$ 0,01 -> Rejeição obrigatória</span>
+  <span class="kw">const</span> <span class="var">refund3</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">paymentClient</span>.<span class="fn">refund</span>(<span class="var">id</span>, { <span class="var">amountInCents</span><span class="op">:</span> <span class="num">1</span> }, <span class="var">merchantToken</span>);
+  <span class="fn">expect</span>(<span class="var">refund3</span>.<span class="fn">status</span>()).<span class="fn">toBe</span>(<span class="num">422</span>);
+  <span class="kw">const</span> <span class="var">errData</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">refund3</span>.<span class="fn">json</span>();
+  <span class="fn">expect</span>(<span class="var">errData</span>.<span class="var">code</span>).<span class="fn">toBe</span>(<span class="str">'REFUND_AMOUNT_EXCEEDS_AVAILABLE_BALANCE'</span>);
+});</code></pre>
+    </div>
+  </section>
+
+  <!-- CAPITULO 6 -->
+  <section id="cap6" class="page-break">
+    <h2>6. Split de Pagamentos & Regras Contábeis de Marketplace</h2>
+    <p>Em arquiteturas de marketplace, a API realiza a partilha dos valores entre múltiplos recebedores (vendedores), retém a comissão da plataforma e atribui quem absorve o MDR (<em>Merchant Discount Rate</em>) e o risco de chargeback.</p>
+
+    <div class="code-wrapper">
+      <div class="code-header"><span>tests/payments/split-payment.spec.ts</span><span>TypeScript</span></div>
+      <pre><code><span class="kw">import</span> { <span class="var">test</span>, <span class="var">expect</span> } <span class="kw">from</span> <span class="str">'../../src/fixtures/apiFixtures'</span>;
+
+<span class="var">test</span>(<span class="str">'deve validar integridade contábil em split com comissão e taxa de processamento'</span>, <span class="kw">async</span> ({
+  <span class="var">request</span>,
+  <span class="var">merchantToken</span>,
+}) <span class="op">=&gt;</span> {
+  <span class="kw">const</span> <span class="var">payload</span> <span class="op">=</span> {
+    <span class="var">amountInCents</span><span class="op">:</span> <span class="num">20000</span>, <span class="com">// R$ 200,00</span>
+    <span class="var">currency</span><span class="op">:</span> <span class="str">'BRL'</span>,
+    <span class="var">paymentMethod</span><span class="op">:</span> <span class="str">'CREDIT_CARD'</span>,
+    <span class="var">splitRules</span><span class="op">:</span> [
+      {
+        <span class="var">recipientId</span><span class="op">:</span> <span class="str">'rec_vendedor_externo'</span>,
+        <span class="var">percentage</span><span class="op">:</span> <span class="num">85</span>, <span class="com">// R$ 170,00</span>
+        <span class="var">chargeProcessingFee</span><span class="op">:</span> <span class="num">false</span>,
+        <span class="var">liableForChargeback</span><span class="op">:</span> <span class="num">true</span>,
+      },
+      {
+        <span class="var">recipientId</span><span class="op">:</span> <span class="str">'rec_marketplace_taxa'</span>,
+        <span class="var">percentage</span><span class="op">:</span> <span class="num">15</span>, <span class="com">// R$ 30,00</span>
+        <span class="var">chargeProcessingFee</span><span class="op">:</span> <span class="num">true</span>, <span class="com">// Plataforma absorve a taxa</span>
+        <span class="var">liableForChargeback</span><span class="op">:</span> <span class="num">false</span>,
+      },
+    ],
+  };
+
+  <span class="kw">const</span> <span class="var">res</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">request</span>.<span class="fn">post</span>(<span class="str">'/v1/payments'</span>, {
+    <span class="var">headers</span><span class="op">:</span> { <span class="var">Authorization</span><span class="op">:</span> <span class="str">`Bearer <span class="op">${</span><span class="var">merchantToken</span><span class="op">}</span>`</span> },
+    <span class="var">data</span><span class="op">:</span> <span class="var">payload</span>,
+  });
+
+  <span class="fn">expect</span>(<span class="var">res</span>.<span class="fn">status</span>()).<span class="fn">toBe</span>(<span class="num">201</span>);
+  <span class="kw">const</span> <span class="var">body</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">res</span>.<span class="fn">json</span>();
+
+  <span class="com">// Invariante: O somatório das divisões líquidas não pode exceder o valor bruto da transação</span>
+  <span class="kw">const</span> <span class="var">totalAllocated</span> <span class="op">=</span> <span class="var">body</span>.<span class="var">split</span>.<span class="fn">reduce</span>(
+    (<span class="var">acc</span><span class="op">:</span> <span class="typ">number</span>, <span class="var">cur</span><span class="op">:</span> <span class="typ">any</span>) <span class="op">=&gt;</span> <span class="var">acc</span> <span class="op">+</span> <span class="var">cur</span>.<span class="var">netAmountInCents</span>,
+    <span class="num">0</span>
+  );
+  <span class="fn">expect</span>(<span class="var">totalAllocated</span>).<span class="fn">toBeLessThanOrEqual</span>(<span class="num">20000</span>);
+
+  <span class="kw">const</span> <span class="var">vendor</span> <span class="op">=</span> <span class="var">body</span>.<span class="var">split</span>.<span class="fn">find</span>((<span class="var">s</span><span class="op">:</span> <span class="typ">any</span>) <span class="op">=&gt;</span> <span class="var">s</span>.<span class="var">recipientId</span> <span class="op">===</span> <span class="str">'rec_vendedor_externo'</span>);
+  <span class="fn">expect</span>(<span class="var">vendor</span>.<span class="var">netAmountInCents</span>).<span class="fn">toBe</span>(<span class="num">17000</span>);
+});</code></pre>
+    </div>
+  </section>
+
+  <!-- CAPITULO 7 -->
+  <section id="cap7" class="page-break">
+    <h2>7. Banco de Dados: Do Zero Absoluto à Auditoria de Pagamentos</h2>
+    <p>Para um QA de backend e pagamentos, o banco de dados é a <strong>Fonte Única da Verdade</strong> (<em>Single Source of Truth</em>). Não basta que a API responda 200 OK no endpoint; se os dados gravados no banco estiverem incorretos, o dinheiro não fecha no final do dia. Este capítulo explica tudo o que você precisa saber sobre bancos relacionais, mesmo que nunca tenha aberto um terminal de banco na vida.</p>
+
+    <h3>7.1 O que é um Banco de Dados Relacional?</h3>
+    <p>Pense em um banco de dados relacional (RDBMS como PostgreSQL ou MySQL) como um conjunto de <strong>planilhas superpoderosas e conectadas entre si</strong>, porém com regras de segurança rígidas que impedem corrupção de dados.</p>
+
+    <div class="diagram-box">BANCO DE DADOS: "fintech_db"
+  │
+  ├── TABELA: "customers" (Clientes)
+  │    [id (PK)]  │  [nome]         │  [email]              │  [saldo_centavos]
+  │    cust_01    │  Maria Silva    │  maria@email.com      │  50000
+  │    cust_02    │  João Souza     │  joao@email.com       │  12000
+  │
+  └── TABELA: "transactions" (Transações)
+       [id (PK)]  │  [customer_id (FK)] ──► Aponta para "customers.id"
+       tx_991     │  cust_01            │  R$ 100,00  │  AUTHORIZED
+       tx_992     │  cust_01            │  R$ 40,00   │  CAPTURED
+       tx_993     │  cust_02            │  R$ 120,00  │  FAILED</div>
+
+    <ul>
+      <li><strong>Tabela:</strong> Uma entidade de negócio (ex: <code>transactions</code>, <code>customers</code>, <code>refunds</code>). É a "aba" da planilha.</li>
+      <li><strong>Coluna / Campo:</strong> O atributo que define um tipo específico de dado (ex: <code>amount_in_cents</code> só aceita números inteiros).</li>
+      <li><strong>Linha / Registro / Tupla:</strong> O registro individual de um evento ocorrido (ex: os dados da transação específica número 991).</li>
+      <li><strong>Chave Primária (Primary Key - PK):</strong> O identificador único e exclusivo daquela linha (ex: UUID ou ID sequencial). Nunca pode haver dois registros com a mesma PK.</li>
+      <li><strong>Chave Estrangeira (Foreign Key - FK):</strong> O elo que liga uma tabela à outra. Se a transação possui <code>customer_id = 'cust_01'</code>, o banco só aceita salvar essa transação se <code>cust_01</code> existir na tabela <code>customers</code>. Isso se chama <em>Integridade Referencial</em>.</li>
+    </ul>
+
+    <h3>7.2 Dicionário de Tipos de Dados Cruciais em Finanças</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Tipo SQL</th>
+          <th>O que armazena?</th>
+          <th>Uso Correto em Pagamentos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>INTEGER / BIGINT</code></td>
+          <td>Números inteiros sem vírgula.</td>
+          <td><strong>Valores monetários em centavos</strong> (R$ 10,00 = 1000). Evita erros de arredondamento.</td>
+        </tr>
+        <tr>
+          <td><code>NUMERIC(15, 2) / DECIMAL</code></td>
+          <td>Números com precisão exata de casas decimais.</td>
+          <td>Usado em relatórios contábeis e taxas percentuais (ex: taxa MDR de <code>2.49%</code>).</td>
+        </tr>
+        <tr>
+          <td><code>VARCHAR(n) / TEXT</code></td>
+          <td>Textos e strings alfanuméricas.</td>
+          <td>IDs de adquirentes, nomes, mensagens de erro e dados mascarados (<code>firstSixDigits</code>).</td>
+        </tr>
+        <tr>
+          <td><code>UUID</code></td>
+          <td>Identificadores únicos universais (128 bits).</td>
+          <td>Padrão da indústria para IDs de transações públicas (ex: <code>c8e5d3f0-8c29...</code>).</td>
+        </tr>
+        <tr>
+          <td><code>TIMESTAMP WITH TIME ZONE</code></td>
+          <td>Data e hora com fuso horário (UTC).</td>
+          <td><strong>Obrigatório em pagamentos.</strong> Todo log financeiro precisa de precisão em milissegundos UTC.</td>
+        </tr>
+        <tr>
+          <td><code>BOOLEAN</code></td>
+          <td>Verdadeiro ou Falso (<code>true / false</code>).</td>
+          <td>Flags de controle interno (ex: <code>is_captured</code>, <code>is_suspicious_fraud</code>).</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>7.3 Guia Rápido de Comandos SQL para QA</h3>
+    <p>SQL (<em>Structured Query Language</em>) é a linguagem utilizada para consultar e manipular esses dados. Abaixo estão os comandos que você utilizará diariamente como QA:</p>
+
+    <h4>A. Criação de Tabelas (DDL - Data Definition Language)</h4>
+    <div class="code-wrapper">
+      <div class="code-header"><span>schema.sql</span><span>SQL</span></div>
+      <pre><code><span class="com">-- Criação da tabela de transações com travas de segurança</span>
+<span class="kw">CREATE TABLE</span> <span class="typ">transactions</span> (
+    <span class="var">id</span> <span class="typ">UUID PRIMARY KEY</span>,
+    <span class="var">merchant_id</span> <span class="typ">UUID NOT NULL</span>,
+    <span class="var">idempotency_key</span> <span class="typ">VARCHAR</span>(<span class="num">255</span>) <span class="typ">UNIQUE</span>, <span class="com">-- Impede duplicação física</span>
+    <span class="var">amount_in_cents</span> <span class="typ">BIGINT NOT NULL CHECK</span> (<span class="var">amount_in_cents</span> <span class="op">&gt;</span> <span class="num">0</span>), <span class="com">-- Não aceita valor negativo</span>
+    <span class="var">status</span> <span class="typ">VARCHAR</span>(<span class="num">30</span>) <span class="typ">NOT NULL</span>,
+    <span class="var">card_pan_masked</span> <span class="typ">VARCHAR</span>(<span class="num">19</span>), <span class="com">-- Ex: 411111******1111</span>
+    <span class="var">card_cvv</span> <span class="typ">VARCHAR</span>(<span class="num">4</span>),         <span class="com">-- ATENÇÃO: DEVE SEMPRE SER NULL (PCI-DSS)</span>
+    <span class="var">created_at</span> <span class="typ">TIMESTAMP WITH TIME ZONE DEFAULT NOW</span>()
+);
+
+<span class="com">-- Criação da tabela de estornos vinculada por Chave Estrangeira</span>
+<span class="kw">CREATE TABLE</span> <span class="typ">refunds</span> (
+    <span class="var">id</span> <span class="typ">UUID PRIMARY KEY</span>,
+    <span class="var">transaction_id</span> <span class="typ">UUID NOT NULL REFERENCES</span> <span class="typ">transactions</span>(<span class="var">id</span>),
+    <span class="var">amount_in_cents</span> <span class="typ">BIGINT NOT NULL CHECK</span> (<span class="var">amount_in_cents</span> <span class="op">&gt;</span> <span class="num">0</span>),
+    <span class="var">status</span> <span class="typ">VARCHAR</span>(<span class="num">30</span>) <span class="typ">NOT NULL</span>,
+    <span class="var">created_at</span> <span class="typ">TIMESTAMP WITH TIME ZONE DEFAULT NOW</span>()
+);</code></pre>
+    </div>
+
+    <h4>B. Consultas e Filtros Essenciais para Testes (DML - Data Manipulation Language)</h4>
+    <div class="code-wrapper">
+      <div class="code-header"><span>consultas_auditoria.sql</span><span>SQL</span></div>
+      <pre><code><span class="com">-- 1. Buscar transações de hoje com valor maior que R$ 100,00</span>
+<span class="kw">SELECT</span> <span class="var">id</span>, <span class="var">status</span>, <span class="var">amount_in_cents</span> 
+<span class="kw">FROM</span> <span class="typ">transactions</span> 
+<span class="kw">WHERE</span> <span class="var">amount_in_cents</span> <span class="op">&gt;=</span> <span class="num">10000</span> 
+  <span class="kw">AND</span> <span class="var">created_at</span> <span class="op">&gt;=</span> <span class="typ">CURRENT_DATE</span>;
+
+<span class="com">-- 2. Auditar se houve violação de segurança PCI (procurar CVV salvo)</span>
+<span class="kw">SELECT</span> <span class="var">id</span>, <span class="var">card_cvv</span> 
+<span class="kw">FROM</span> <span class="typ">transactions</span> 
+<span class="kw">WHERE</span> <span class="var">card_cvv</span> <span class="kw">IS NOT NULL</span>; <span class="com">-- O resultado deve retornar ZERO linhas!</span>
+
+<span class="com">-- 3. INNER JOIN: Conferir quanto de uma transação foi estornado somando refunds</span>
+<span class="kw">SELECT</span> 
+    <span class="var">t</span>.<span class="var">id</span> <span class="kw">AS</span> <span class="var">transacao_id</span>,
+    <span class="var">t</span>.<span class="var">amount_in_cents</span> <span class="kw">AS</span> <span class="var">valor_original</span>,
+    <span class="fn">COALESCE</span>(<span class="fn">SUM</span>(<span class="var">r</span>.<span class="var">amount_in_cents</span>), <span class="num">0</span>) <span class="kw">AS</span> <span class="var">total_estornado</span>
+<span class="kw">FROM</span> <span class="typ">transactions</span> <span class="var">t</span>
+<span class="kw">LEFT JOIN</span> <span class="typ">refunds</span> <span class="var">r</span> <span class="kw">ON</span> <span class="var">t</span>.<span class="var">id</span> <span class="op">=</span> <span class="var">r</span>.<span class="var">transaction_id</span>
+<span class="kw">WHERE</span> <span class="var">t</span>.<span class="var">id</span> <span class="op">=</span> <span class="str">'d3b07384-d113-4f40-8b4e-e0ef3e120899'</span>
+<span class="kw">GROUP BY</span> <span class="var">t</span>.<span class="var">id</span>, <span class="var">t</span>.<span class="var">amount_in_cents</span>;</code></pre>
+    </div>
+
+    <h3>7.4 Como Subir e Visualizar o Banco Localmente (Docker + DBeaver)</h3>
+    <p>Você não precisa instalar o PostgreSQL diretamente no seu sistema operacional. A melhor prática é rodar o banco dentro de um container Docker e utilizar um cliente visual intuitivo (DBeaver) para enxergar as tabelas.</p>
+
+    <h4>Passo 1: Subir o PostgreSQL em 1 comando no terminal</h4>
+    <div class="code-wrapper">
+      <div class="code-header"><span>Terminal</span><span>Bash</span></div>
+      <pre><code>docker run --name local-postgres -e POSTGRES_PASSWORD=postgres123 -e POSTGRES_DB=fintech_db -p 5432:5432 -d postgres:16</code></pre>
+    </div>
+
+    <h4>Passo 2: Entendendo a String de Conexão (DATABASE_URL)</h4>
+    <p>A string de conexão é o endereço unificado que seu código e ferramentas usam para logar no banco:</p>
+    <div class="diagram-box">postgresql://postgres:postgres123@localhost:5432/fintech_db
+    │          │        │           │        │    └─ Nome do Banco (Database)
+    │          │        │           │        └────── Porta padrão do PostgreSQL
+    │          │        │           └─────────────── Host / Endereço (máquina local)
+    │          │        └─────────────────────────── Senha de acesso
+    │          └──────────────────────────────────── Usuário administrador
+    └─────────────────────────────────────────────── Protocolo do Driver</div>
+
+    <h4>Passo 3: Conectar com o DBeaver (Ferramenta Gráfica Gratuita)</h4>
+    <ol>
+      <li>Baixe e instale o <strong>DBeaver Community</strong> (dbeaver.io).</li>
+      <li>Clique no ícone de <strong>Nova Conexão</strong> (tomada elétrica com um sinal de mais) e escolha <strong>PostgreSQL</strong>.</li>
+      <li>Preencha os campos com os dados da sua URL: Host: <code>localhost</code>, Porta: <code>5432</code>, Banco: <code>fintech_db</code>, Usuário: <code>postgres</code>, Senha: <code>postgres123</code>.</li>
+      <li>Clique em <strong>Test Connection</strong>. Aparecerá a mensagem "Conectado". Pronto! Agora você pode navegar pelas tabelas como se fossem pastas no seu computador.</li>
+    </ol>
+
+    <h3>7.5 Transações e Propriedades ACID em Sistemas Financeiros</h3>
+    <p>Em pagamentos, um único clique do usuário gera múltiplas alterações em banco (ex: debitar R$ 50 da carteira e criar um registro de pedido). Se a energia acabar no meio do caminho, o sistema não pode debitar o cliente sem registrar o pedido. É aqui que entram as propriedades <strong>ACID</strong>:</p>
+
+    <ul>
+      <li><strong>Atomicidade (All or Nothing):</strong> Ou todas as operações acontecem com sucesso, ou nada acontece. Se houver falha, o comando <code>ROLLBACK</code> desfaz tudo.</li>
+      <li><strong>Consistência:</strong> Os dados devem respeitar as regras estabelecidas (ex: uma chave primária não pode ser duplicada, um saldo não pode ficar negativo se houver a regra <code>CHECK</code>).</li>
+      <li><strong>Isolamento:</strong> Transações simultâneas não interferem umas nas outras antes de serem finalizadas.</li>
+      <li><strong>Durabilidade:</strong> Uma vez finalizada com <code>COMMIT</code>, os dados estão gravados de forma permanente no disco.</li>
+    </ul>
+
+    <h4>Bloqueio Pessimista contra Double-Spending (SELECT FOR UPDATE)</h4>
+    <p>Quando dois pagamentos concorrentes tentam gastar o mesmo saldo ao mesmo tempo, o backend utiliza o comando <code>SELECT ... FOR UPDATE</code>. Esse comando bloqueia temporariamente a linha daquele cliente no banco até que o cálculo termine, impedindo que duas requisições leiam o mesmo saldo no mesmo milissegundo.</p>
+
+    <h3>7.6 Integrando o Banco de Dados nos Testes Playwright</h3>
+    <p>Para auditar o banco dentro da sua suíte de automação com Playwright, instalamos a biblioteca oficial <code>pg</code> (node-postgres):</p>
+    <div class="code-wrapper">
+      <div class="code-header"><span>Terminal</span><span>Bash</span></div>
+      <pre><code>npm install pg
+npm install --save-dev @types/pg</code></pre>
+    </div>
+
+    <h4>Teste de Auditoria Contábil e Compliance PCI-DSS Automatizado</h4>
+    <p>Veja como o Playwright dispara a requisição na API de pagamento e em seguida conecta diretamente no PostgreSQL para atestar a conformidade contábil e a segurança dos dados:</p>
+
+    <div class="code-wrapper">
+      <div class="code-header"><span>tests/database/db-audit.spec.ts</span><span>TypeScript</span></div>
+      <pre><code><span class="kw">import</span> { <span class="var">test</span>, <span class="var">expect</span> } <span class="kw">from</span> <span class="str">'../../src/fixtures/apiFixtures'</span>;
+<span class="kw">import</span> { <span class="typ">PaymentFactory</span> } <span class="kw">from</span> <span class="str">'../../src/factories/PaymentFactory'</span>;
+
+<span class="var">test</span>.<span class="fn">describe</span>(<span class="str">'Auditoria Automatizada de Banco de Dados e PCI-DSS'</span>, () <span class="op">=&gt;</span> {
+  <span class="var">test</span>(<span class="str">'deve criar transação na API e auditar persistência e compliance PCI no PostgreSQL'</span>, <span class="kw">async</span> ({
+    <span class="var">paymentClient</span>,
+    <span class="var">merchantToken</span>,
+    <span class="var">db</span>, <span class="com">// Pool PostgreSQL injetado automaticamente via Fixture!</span>
+  }) <span class="op">=&gt;</span> {
+    <span class="kw">const</span> <span class="var">amountInCents</span> <span class="op">=</span> <span class="num">25000</span>; <span class="com">// R$ 250,00</span>
+    <span class="kw">const</span> <span class="var">payload</span> <span class="op">=</span> <span class="typ">PaymentFactory</span>.<span class="fn">createValidCreditCardPayload</span>({ <span class="var">amountInCents</span> });
+
+    <span class="com">// 1. Ação: Realiza o pagamento via API HTTP</span>
+    <span class="kw">const</span> <span class="var">response</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">paymentClient</span>.<span class="fn">createPayment</span>(<span class="var">payload</span>, { <span class="var">token</span><span class="op">:</span> <span class="var">merchantToken</span> });
+    <span class="fn">expect</span>(<span class="var">response</span>.<span class="fn">status</span>()).<span class="fn">toBe</span>(<span class="num">201</span>);
+    <span class="kw">const</span> { <span class="var">id</span> } <span class="op">=</span> <span class="kw">await</span> <span class="var">response</span>.<span class="fn">json</span>();
+
+    <span class="com">// 2. Auditoria Direta no Banco de Dados: Busca a linha gravada</span>
+    <span class="kw">const</span> <span class="var">queryResult</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">db</span>.<span class="fn">query</span>(
+      <span class="str">`SELECT id, status, amount_in_cents, card_pan_masked, card_cvv, created_at 
+       FROM transactions 
+       WHERE id = $1`</span>,
+      [<span class="var">id</span>] <span class="com">// Parameterized Query para evitar SQL Injection</span>
+    );
+
+    <span class="com">// 3. Asserções de Validação de Banco</span>
+    <span class="fn">expect</span>(<span class="var">queryResult</span>.<span class="var">rows</span>.<span class="var">length</span>).<span class="fn">toBe</span>(<span class="num">1</span>);
+    <span class="kw">const</span> <span class="var">row</span> <span class="op">=</span> <span class="var">queryResult</span>.<span class="var">rows</span>[<span class="num">0</span>];
+
+    <span class="com">// Validação Contábil (Centavos Exatos)</span>
+    <span class="fn">expect</span>(<span class="typ">Number</span>(<span class="var">row</span>.<span class="var">amount_in_cents</span>)).<span class="fn">toBe</span>(<span class="num">25000</span>);
+    <span class="fn">expect</span>(<span class="var">row</span>.<span class="var">status</span>).<span class="fn">toBe</span>(<span class="str">'AUTHORIZED'</span>);
+
+    <span class="com">// Validação Regulatória de Segurança PCI-DSS</span>
+    <span class="fn">expect</span>(<span class="var">row</span>.<span class="var">card_pan_masked</span>).<span class="fn">toMatch</span>(<span class="op">/</span><span class="str">^\d{6}\*{6}\d{4}$</span><span class="op">/</span>); <span class="com">// Ex: 411111******1111</span>
+    <span class="fn">expect</span>(<span class="var">row</span>.<span class="var">card_cvv</span>).<span class="fn">toBeNull</span>(); <span class="com">// CVV NUNCA PODE SER PERSISTIDO</span>
+  });
+});</code></pre>
+    </div>
+  </section>
+
+  <!-- CAPITULO 8 -->
+  <section id="cap8" class="page-break">
+    <h2>8. Multi-Adquirência & Smart Routing com Fallback Resiliente</h2>
+    <p>Gateways corporativos operam com roteamento inteligente entre múltiplas adquirentes (ex: Cielo, Stone, Rede). Se a adquirente primária retornar 504 Gateway Timeout ou erro interno, o sistema deve executar failover transparente para a secundária sem retornar erro ao cliente final.</p>
+
+    <div class="code-wrapper">
+      <div class="code-header"><span>tests/payments/smart-routing.spec.ts</span><span>TypeScript</span></div>
+      <pre><code><span class="kw">import</span> { <span class="var">test</span>, <span class="var">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="var">test</span>(<span class="str">'deve efetuar fallback automático para a adquirente secundária ao sofrer timeout na primária'</span>, <span class="kw">async</span> ({
+  <span class="var">request</span>,
+}) <span class="op">=&gt;</span> {
+  <span class="com">// Configura mock para injetar timeout de 3.5s na Cielo</span>
+  <span class="kw">await</span> <span class="var">request</span>.<span class="fn">post</span>(<span class="str">'/v1/mock-gateway/acquirers/cielo/configure'</span>, {
+    <span class="var">data</span><span class="op">:</span> { <span class="var">behavior</span><span class="op">:</span> <span class="str">'GATEWAY_TIMEOUT'</span>, <span class="var">delayMs</span><span class="op">:</span> <span class="num">3500</span> },
+  });
+
+  <span class="kw">const</span> <span class="var">startTime</span> <span class="op">=</span> <span class="typ">Date</span>.<span class="fn">now</span>();
+  <span class="kw">const</span> <span class="var">chargeRes</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">request</span>.<span class="fn">post</span>(<span class="str">'/v1/charges'</span>, {
+    <span class="var">data</span><span class="op">:</span> {
+      <span class="var">amountInCents</span><span class="op">:</span> <span class="num">15000</span>,
+      <span class="var">paymentMethod</span><span class="op">:</span> <span class="str">'CREDIT_CARD'</span>,
+      <span class="var">cardToken</span><span class="op">:</span> <span class="str">'tok_visa_valid_credit'</span>,
+    },
+    <span class="var">timeout</span><span class="op">:</span> <span class="num">8000</span>,
+  });
+
+  <span class="kw">const</span> <span class="var">duration</span> <span class="op">=</span> <span class="typ">Date</span>.<span class="fn">now</span>() <span class="op">-</span> <span class="var">startTime</span>;
+  <span class="fn">expect</span>(<span class="var">chargeRes</span>.<span class="fn">status</span>()).<span class="fn">toBe</span>(<span class="num">201</span>);
+  <span class="kw">const</span> <span class="var">data</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">chargeRes</span>.<span class="fn">json</span>();
+
+  <span class="fn">expect</span>(<span class="var">data</span>.<span class="var">status</span>).<span class="fn">toBe</span>(<span class="str">'AUTHORIZED'</span>);
+  <span class="fn">expect</span>(<span class="var">data</span>.<span class="var">routing</span>.<span class="var">primaryAcquirer</span>).<span class="fn">toBe</span>(<span class="str">'CIELO'</span>);
+  <span class="fn">expect</span>(<span class="var">data</span>.<span class="var">routing</span>.<span class="var">executedAcquirer</span>).<span class="fn">toBe</span>(<span class="str">'STONE'</span>);
+  <span class="fn">expect</span>(<span class="var">data</span>.<span class="var">routing</span>.<span class="var">fallbackReason</span>).<span class="fn">toBe</span>(<span class="str">'PRIMARY_ACQUIRER_TIMEOUT'</span>);
+  <span class="fn">expect</span>(<span class="var">duration</span>).<span class="fn">toBeGreaterThanOrEqual</span>(<span class="num">3000</span>);
+});</code></pre>
+    </div>
+  </section>
+
+  <!-- CAPITULO 9 -->
+  <section id="cap9" class="page-break">
+    <h2>9. Validação de Contrato em Runtime com Zod</h2>
+    <p>Interfaces TypeScript são removidas na compilação e não garantem segurança em runtime. Validações estritas com <strong>Zod</strong> asseguram que quebras de contrato (<em>breaking changes</em>) ou vazamento de campos confidenciais falhem a suíte imediatamente.</p>
+
+    <div class="code-wrapper">
+      <div class="code-header"><span>src/schemas/payment.schema.ts</span><span>TypeScript</span></div>
+      <pre><code><span class="kw">import</span> { <span class="var">z</span> } <span class="kw">from</span> <span class="str">'zod'</span>;
+
+<span class="kw">export const</span> <span class="typ">PaymentResponseSchema</span> <span class="op">=</span> <span class="var">z</span>.<span class="fn">object</span>({
+  <span class="var">id</span><span class="op">:</span> <span class="var">z</span>.<span class="fn">string</span>().<span class="fn">uuid</span>(),
+  <span class="var">status</span><span class="op">:</span> <span class="var">z</span>.<span class="fn">enum</span>([<span class="str">'PENDING'</span>, <span class="str">'AUTHORIZED'</span>, <span class="str">'CAPTURED'</span>, <span class="str">'FAILED'</span>, <span class="str">'VOIDED'</span>, <span class="str">'REFUNDED'</span>]),
+  <span class="var">amountInCents</span><span class="op">:</span> <span class="var">z</span>.<span class="fn">number</span>().<span class="fn">int</span>().<span class="fn">positive</span>(),
+  <span class="var">currency</span><span class="op">:</span> <span class="var">z</span>.<span class="fn">literal</span>(<span class="str">'BRL'</span>),
+  <span class="var">authorizationCode</span><span class="op">:</span> <span class="var">z</span>.<span class="fn">string</span>().<span class="fn">min</span>(<span class="num">6</span>).<span class="fn">max</span>(<span class="num">32</span>).<span class="fn">optional</span>(),
+  <span class="var">card</span><span class="op">:</span> <span class="var">z</span>.<span class="fn">object</span>({
+    <span class="var">firstSixDigits</span><span class="op">:</span> <span class="var">z</span>.<span class="fn">string</span>().<span class="fn">length</span>(<span class="num">6</span>),
+    <span class="var">lastFourDigits</span><span class="op">:</span> <span class="var">z</span>.<span class="fn">string</span>().<span class="fn">length</span>(<span class="num">4</span>),
+    <span class="var">holderName</span><span class="op">:</span> <span class="var">z</span>.<span class="fn">string</span>(),
+    <span class="var">expirationMonth</span><span class="op">:</span> <span class="var">z</span>.<span class="fn">string</span>(),
+    <span class="var">expirationYear</span><span class="op">:</span> <span class="var">z</span>.<span class="fn">string</span>(),
+  }).<span class="fn">strict</span>().<span class="fn">optional</span>(), <span class="com">// strict() impede vazamento de CVV ou dados adicionais</span>
+  <span class="var">createdAt</span><span class="op">:</span> <span class="var">z</span>.<span class="fn">string</span>().<span class="fn">datetime</span>(),
+  <span class="var">updatedAt</span><span class="op">:</span> <span class="var">z</span>.<span class="fn">string</span>().<span class="fn">datetime</span>(),
+}).<span class="fn">strict</span>();</code></pre>
+    </div>
+  </section>
+
+  <!-- CAPITULO 10 -->
+  <section id="cap10" class="page-break">
+    <h2>10. Automação E2E de Pix (BACEN API v2: Cobrança e Devolução)</h2>
+
+    <h3>10.1 Padrões de Identificadores Regulamentados</h3>
+    <ul>
+      <li><strong>txid:</strong> Identificador criado pelo recebedor (26 a 35 caracteres alfanuméricos: <code>^[a-zA-Z0-9]{26,35}$</code>).</li>
+      <li><strong>e2eid (End-to-End Identification):</strong> Gerado exclusivamente pelo Banco Central/SPI na liquidação:
+        <div class="math-block">e2eid = "E" + ISPB (8 dígitos) + Data/Hora UTC (YYYYMMDDhhmm) + Sequencial (11 caracteres)</div>
+      </li>
+      <li><strong>rtrId (Return Identification):</strong> Gerado na devolução, iniciado por 'D'.</li>
+    </ul>
+
+    <h3>10.2 Emissão de Cobrança, Liquidação e Devolução Regulatória</h3>
+    <div class="code-wrapper">
+      <div class="code-header"><span>tests/pix/pix-lifecycle.spec.ts</span><span>TypeScript</span></div>
+      <pre><code><span class="kw">import</span> { <span class="var">test</span>, <span class="var">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+<span class="kw">import</span> <span class="var">crypto</span> <span class="kw">from</span> <span class="str">'node:crypto'</span>;
+
+<span class="kw">const</span> <span class="var">txidRegex</span> <span class="op">=</span> <span class="op">/</span><span class="str">^[a-zA-Z0-9]{26,35}$</span><span class="op">/</span>;
+<span class="kw">const</span> <span class="var">e2eidRegex</span> <span class="op">=</span> <span class="op">/</span><span class="str">^E\d{8}\d{12}[a-zA-Z0-9]{11}$</span><span class="op">/</span>;
+<span class="kw">const</span> <span class="var">rtrIdRegex</span> <span class="op">=</span> <span class="op">/</span><span class="str">^D\d{8}\d{12}[a-zA-Z0-9]{11}$</span><span class="op">/</span>;
+
+<span class="var">test</span>(<span class="str">'ciclo completo Pix: emissão de cobrança imediata, liquidação SPI e devolução'</span>, <span class="kw">async</span> ({ <span class="var">request</span> }) <span class="op">=&gt;</span> {
+  <span class="kw">const</span> <span class="var">txid</span> <span class="op">=</span> <span class="var">crypto</span>.<span class="fn">randomBytes</span>(<span class="num">16</span>).<span class="fn">toString</span>(<span class="str">'hex'</span>);
+  <span class="fn">expect</span>(<span class="var">txid</span>).<span class="fn">toMatch</span>(<span class="var">txidRegex</span>);
+
+  <span class="com">// 1. Emissão da Cobrança</span>
+  <span class="kw">const</span> <span class="var">cobRes</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">request</span>.<span class="fn">put</span>(<span class="str">`/v2/cob/<span class="op">${</span><span class="var">txid</span><span class="op">}</span>`</span>, {
+    <span class="var">data</span><span class="op">:</span> {
+      <span class="var">calendario</span><span class="op">:</span> { <span class="var">expiracao</span><span class="op">:</span> <span class="num">3600</span> },
+      <span class="var">valor</span><span class="op">:</span> { <span class="var">original</span><span class="op">:</span> <span class="str">'50.00'</span> },
+      <span class="var">chave</span><span class="op">:</span> <span class="str">'financeiro@empresa.com.br'</span>,
+      <span class="var">solicitacaoPagador</span><span class="op">:</span> <span class="str">'Pedido #8821'</span>,
+    },
+  });
+  <span class="fn">expect</span>(<span class="var">cobRes</span>.<span class="fn">status</span>()).<span class="fn">toBe</span>(<span class="num">201</span>);
+  <span class="kw">const</span> { <span class="var">pixCopiaECola</span> } <span class="op">=</span> <span class="kw">await</span> <span class="var">cobRes</span>.<span class="fn">json</span>();
+
+  <span class="com">// 2. Simulação da Liquidação no Banco Central</span>
+  <span class="kw">await</span> <span class="var">request</span>.<span class="fn">post</span>(<span class="str">'/v2/sandbox/simulator/pay'</span>, {
+    <span class="var">data</span><span class="op">:</span> { <span class="var">pixCopiaECola</span> },
+  });
+
+  <span class="com">// 3. Validação do e2eid retornado</span>
+  <span class="kw">const</span> <span class="var">checkRes</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">request</span>.<span class="fn">get</span>(<span class="str">`/v2/cob/<span class="op">${</span><span class="var">txid</span><span class="op">}</span>`</span>);
+  <span class="kw">const</span> <span class="var">checkBody</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">checkRes</span>.<span class="fn">json</span>();
+  <span class="fn">expect</span>(<span class="var">checkBody</span>.<span class="var">status</span>).<span class="fn">toBe</span>(<span class="str">'CONCLUIDA'</span>);
+  <span class="kw">const</span> <span class="var">e2eid</span> <span class="op">=</span> <span class="var">checkBody</span>.<span class="var">pix</span>[<span class="num">0</span>].<span class="var">endToEndId</span>;
+  <span class="fn">expect</span>(<span class="var">e2eid</span>).<span class="fn">toMatch</span>(<span class="var">e2eidRegex</span>);
+
+  <span class="com">// 4. Devolução Regulatória via BACEN v2</span>
+  <span class="kw">const</span> <span class="var">devId</span> <span class="op">=</span> <span class="var">crypto</span>.<span class="fn">randomBytes</span>(<span class="num">8</span>).<span class="fn">toString</span>(<span class="str">'hex'</span>);
+  <span class="kw">const</span> <span class="var">refundRes</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">request</span>.<span class="fn">put</span>(<span class="str">`/v2/pix/<span class="op">${</span><span class="var">e2eid</span><span class="op">}</span>/devolucao/<span class="op">${</span><span class="var">devId</span><span class="op">}</span>`</span>, {
+    <span class="var">data</span><span class="op">:</span> {
+      <span class="var">valor</span><span class="op">:</span> <span class="str">'20.00'</span>,
+      <span class="var">natureza</span><span class="op">:</span> <span class="str">'ORIGINAL'</span>,
+      <span class="var">descricao</span><span class="op">:</span> <span class="str">'Devolucao parcial autorizada'</span>,
+    },
+  });
+  <span class="fn">expect</span>([<span class="num">200</span>, <span class="num">201</span>]).<span class="fn">toContain</span>(<span class="var">refundRes</span>.<span class="fn">status</span>());
+  <span class="kw">const</span> <span class="var">refundBody</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">refundRes</span>.<span class="fn">json</span>();
+  <span class="fn">expect</span>(<span class="var">refundBody</span>.<span class="var">id</span>).<span class="fn">toBe</span>(<span class="var">devId</span>);
+  <span class="fn">expect</span>(<span class="var">refundBody</span>.<span class="var">rtrId</span>).<span class="fn">toMatch</span>(<span class="var">rtrIdRegex</span>);
+  <span class="fn">expect</span>([<span class="str">'EM_PROCESSAMENTO'</span>, <span class="str">'DEVOLVIDO'</span>]).<span class="fn">toContain</span>(<span class="var">refundBody</span>.<span class="var">status</span>);
+});</code></pre>
+    </div>
+  </section>
+
+  <!-- CAPITULO 11 -->
+  <section id="cap11" class="page-break">
+    <h2>11. Webhooks: HMAC-SHA256, Desordenamento & Retentativas</h2>
+
+    <h3>11.1 Servidor Receptor Seguro com timingSafeEqual</h3>
+    <p>Para atestar que o payload recebido não sofreu adulteração em trânsito, calculamos a assinatura HMAC-SHA256 sobre o buffer bruto e utilizamos <code>crypto.timingSafeEqual</code> para mitigar ataques de temporização (<em>Timing Attacks</em>).</p>
+
+    <div class="code-wrapper">
+      <div class="code-header"><span>src/services/SecureWebhookReceiver.ts</span><span>TypeScript</span></div>
+      <pre><code><span class="kw">import</span> <span class="var">http</span>, { <span class="fn">createServer</span>, <span class="typ">Server</span>, <span class="typ">IncomingMessage</span>, <span class="typ">ServerResponse</span> } <span class="kw">from</span> <span class="str">'node:http'</span>;
+<span class="kw">import</span> { <span class="typ">AddressInfo</span> } <span class="kw">from</span> <span class="str">'node:net'</span>;
+<span class="kw">import</span> { <span class="typ">EventEmitter</span> } <span class="kw">from</span> <span class="str">'node:events'</span>;
+<span class="kw">import</span> <span class="var">crypto</span> <span class="kw">from</span> <span class="str">'node:crypto'</span>;
+
+<span class="kw">export class</span> <span class="typ">SecureWebhookReceiver</span> {
+  <span class="kw">private</span> <span class="var">server</span><span class="op">:</span> <span class="typ">Server</span>;
+  <span class="kw">private</span> <span class="var">emitter</span> <span class="op">=</span> <span class="kw">new</span> <span class="typ">EventEmitter</span>();
+  <span class="kw">public</span> <span class="var">port</span> <span class="op">=</span> <span class="num">0</span>;
+  <span class="kw">public</span> <span class="var">url</span> <span class="op">=</span> <span class="str">''</span>;
+
+  <span class="kw">constructor</span>(<span class="kw">private readonly</span> <span class="var">secret</span><span class="op">:</span> <span class="typ">string</span>) {
+    <span class="kw">this</span>.<span class="var">server</span> <span class="op">=</span> <span class="fn">createServer</span>((<span class="var">req</span>, <span class="var">res</span>) <span class="op">=&gt;</span> <span class="kw">this</span>.<span class="fn">handle</span>(<span class="var">req</span>, <span class="var">res</span>));
+  }
+
+  <span class="kw">async</span> <span class="fn">start</span>()<span class="op">:</span> <span class="typ">Promise</span><span class="op">&lt;</span><span class="typ">string</span><span class="op">&gt;</span> {
+    <span class="kw">return new</span> <span class="typ">Promise</span>((<span class="var">resolve</span>) <span class="op">=&gt;</span> {
+      <span class="kw">this</span>.<span class="var">server</span>.<span class="fn">listen</span>(<span class="num">0</span>, <span class="str">'127.0.0.1'</span>, () <span class="op">=&gt;</span> {
+        <span class="kw">const</span> <span class="var">addr</span> <span class="op">=</span> <span class="kw">this</span>.<span class="var">server</span>.<span class="fn">address</span>() <span class="kw">as</span> <span class="typ">AddressInfo</span>;
+        <span class="kw">this</span>.<span class="var">port</span> <span class="op">=</span> <span class="var">addr</span>.<span class="var">port</span>;
+        <span class="kw">this</span>.<span class="var">url</span> <span class="op">=</span> <span class="str">`http://127.0.0.1:<span class="op">${</span><span class="kw">this</span>.<span class="var">port</span><span class="op">}</span>/webhook`</span>;
+        <span class="fn">resolve</span>(<span class="kw">this</span>.<span class="var">url</span>);
+      });
+    });
+  }
+
+  <span class="kw">private</span> <span class="fn">handle</span>(<span class="var">req</span><span class="op">:</span> <span class="typ">IncomingMessage</span>, <span class="var">res</span><span class="op">:</span> <span class="typ">ServerResponse</span>)<span class="op">:</span> <span class="typ">void</span> {
+    <span class="kw">const</span> <span class="var">chunks</span><span class="op">:</span> <span class="typ">Buffer</span>[] <span class="op">=</span> [];
+    <span class="var">req</span>.<span class="fn">on</span>(<span class="str">'data'</span>, (<span class="var">c</span>) <span class="op">=&gt;</span> <span class="var">chunks</span>.<span class="fn">push</span>(<span class="var">c</span>));
+    <span class="var">req</span>.<span class="fn">on</span>(<span class="str">'end'</span>, () <span class="op">=&gt;</span> {
+      <span class="kw">const</span> <span class="var">rawBody</span> <span class="op">=</span> <span class="typ">Buffer</span>.<span class="fn">concat</span>(<span class="var">chunks</span>);
+      <span class="kw">const</span> <span class="var">signature</span> <span class="op">=</span> <span class="var">req</span>.<span class="var">headers</span>[<span class="str">'x-signature-sha256'</span>] <span class="kw">as</span> <span class="typ">string</span>;
+
+      <span class="kw">if</span> (<span class="op">!</span><span class="var">signature</span>) {
+        <span class="var">res</span>.<span class="fn">writeHead</span>(<span class="num">401</span>).<span class="fn">end</span>(<span class="typ">JSON</span>.<span class="fn">stringify</span>({ <span class="var">error</span><span class="op">:</span> <span class="str">'Assinatura ausente'</span> }));
+        <span class="kw">return</span>;
+      }
+
+      <span class="kw">const</span> <span class="var">computed</span> <span class="op">=</span> <span class="var">crypto</span>
+        .<span class="fn">createHmac</span>(<span class="str">'sha256'</span>, <span class="kw">this</span>.<span class="var">secret</span>)
+        .<span class="fn">update</span>(<span class="var">rawBody</span>)
+        .<span class="fn">digest</span>(<span class="str">'hex'</span>);
+
+      <span class="kw">const</span> <span class="var">bufExpected</span> <span class="op">=</span> <span class="typ">Buffer</span>.<span class="fn">from</span>(<span class="var">signature</span>, <span class="str">'hex'</span>);
+      <span class="kw">const</span> <span class="var">bufComputed</span> <span class="op">=</span> <span class="typ">Buffer</span>.<span class="fn">from</span>(<span class="var">computed</span>, <span class="str">'hex'</span>);
+
+      <span class="kw">if</span> (<span class="var">bufExpected</span>.<span class="var">length</span> <span class="op">!==</span> <span class="var">bufComputed</span>.<span class="var">length</span> <span class="op">||</span> <span class="op">!</span><span class="var">crypto</span>.<span class="fn">timingSafeEqual</span>(<span class="var">bufExpected</span>, <span class="var">bufComputed</span>)) {
+        <span class="var">res</span>.<span class="fn">writeHead</span>(<span class="num">403</span>).<span class="fn">end</span>(<span class="typ">JSON</span>.<span class="fn">stringify</span>({ <span class="var">error</span><span class="op">:</span> <span class="str">'Assinatura invalida'</span> }));
+        <span class="kw">return</span>;
+      }
+
+      <span class="kw">const</span> <span class="var">payload</span> <span class="op">=</span> <span class="typ">JSON</span>.<span class="fn">parse</span>(<span class="var">rawBody</span>.<span class="fn">toString</span>(<span class="str">'utf-8'</span>));
+      <span class="kw">this</span>.<span class="var">emitter</span>.<span class="fn">emit</span>(<span class="str">`evt:<span class="op">${</span><span class="var">payload</span>.<span class="var">id</span><span class="op">}</span>`</span>, <span class="var">payload</span>);
+      <span class="var">res</span>.<span class="fn">writeHead</span>(<span class="num">200</span>).<span class="fn">end</span>(<span class="typ">JSON</span>.<span class="fn">stringify</span>({ <span class="var">status</span><span class="op">:</span> <span class="str">'DELIVERED'</span> }));
+    });
+  }
+
+  <span class="kw">async</span> <span class="fn">stop</span>()<span class="op">:</span> <span class="typ">Promise</span><span class="op">&lt;</span><span class="typ">void</span><span class="op">&gt;</span> {
+    <span class="kw">return new</span> <span class="typ">Promise</span>((<span class="var">resolve</span>) <span class="op">=&gt;</span> <span class="kw">this</span>.<span class="var">server</span>.<span class="fn">close</span>(() <span class="op">=&gt;</span> <span class="fn">resolve</span>()));
+  }
+}</code></pre>
+    </div>
+
+    <h3>11.2 Entrega Fora de Ordem (Out-of-Order Webhooks)</h3>
+    <p>Em sistemas assíncronos que utilizam mensageria (Kafka, RabbitMQ, AWS SQS), a ordem de entrega não é garantida. O webhook receptor deve tolerar a chegada do evento <code>PAYMENT_CAPTURED</code> antes de <code>PAYMENT_AUTHORIZED</code> sem regredir o estado do pedido.</p>
+
+    <div class="code-wrapper">
+      <div class="code-header"><span>tests/webhooks/out-of-order.spec.ts</span><span>TypeScript</span></div>
+      <pre><code><span class="kw">import</span> { <span class="var">test</span>, <span class="var">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="var">test</span>(<span class="str">'o receptor não deve regredir status se AUTHORIZED chegar após CAPTURED'</span>, <span class="kw">async</span> ({ <span class="var">request</span> }) <span class="op">=&gt;</span> {
+  <span class="kw">const</span> <span class="var">orderId</span> <span class="op">=</span> <span class="str">`order_<span class="op">${</span><span class="typ">Date</span>.<span class="fn">now</span>()<span class="op">}</span>`</span>;
+
+  <span class="com">// 1. Dispara evento de CAPTURA (adiantado)</span>
+  <span class="kw">const</span> <span class="var">capRes</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">request</span>.<span class="fn">post</span>(<span class="str">'/api/webhooks/listener'</span>, {
+    <span class="var">data</span><span class="op">:</span> {
+      <span class="var">id</span><span class="op">:</span> <span class="str">`evt_cap_<span class="op">${</span><span class="typ">Date</span>.<span class="fn">now</span>()<span class="op">}</span>`</span>,
+      <span class="var">type</span><span class="op">:</span> <span class="str">'PAYMENT_CAPTURED'</span>,
+      <span class="var">data</span><span class="op">:</span> { <span class="var">orderId</span>, <span class="var">status</span><span class="op">:</span> <span class="str">'CAPTURED'</span>, <span class="var">timestamp</span><span class="op">:</span> <span class="typ">Date</span>.<span class="fn">now</span>() },
+    },
+  });
+  <span class="fn">expect</span>(<span class="var">capRes</span>.<span class="fn">status</span>()).<span class="fn">toBe</span>(<span class="num">200</span>);
+
+  <span class="com">// 2. Dispara evento de AUTORIZAÇÃO (atrasado)</span>
+  <span class="kw">const</span> <span class="var">authRes</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">request</span>.<span class="fn">post</span>(<span class="str">'/api/webhooks/listener'</span>, {
+    <span class="var">data</span><span class="op">:</span> {
+      <span class="var">id</span><span class="op">:</span> <span class="str">`evt_auth_<span class="op">${</span><span class="typ">Date</span>.<span class="fn">now</span>()<span class="op">}</span>`</span>,
+      <span class="var">type</span><span class="op">:</span> <span class="str">'PAYMENT_AUTHORIZED'</span>,
+      <span class="var">data</span><span class="op">:</span> { <span class="var">orderId</span>, <span class="var">status</span><span class="op">:</span> <span class="str">'AUTHORIZED'</span>, <span class="var">timestamp</span><span class="op">:</span> <span class="typ">Date</span>.<span class="fn">now</span>() <span class="op">-</span> <span class="num">5000</span> },
+    },
+  });
+  <span class="fn">expect</span>(<span class="var">authRes</span>.<span class="fn">status</span>()).<span class="fn">toBe</span>(<span class="num">200</span>);
+
+  <span class="com">// 3. Validação do estado final na aplicação</span>
+  <span class="kw">const</span> <span class="var">orderRes</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">request</span>.<span class="fn">get</span>(<span class="str">`/v1/orders/<span class="op">${</span><span class="var">orderId</span><span class="op">}</span>`</span>);
+  <span class="kw">const</span> <span class="var">order</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">orderRes</span>.<span class="fn">json</span>();
+  <span class="fn">expect</span>(<span class="var">order</span>.<span class="var">status</span>).<span class="fn">toBe</span>(<span class="str">'CAPTURED'</span>);
+});</code></pre>
+    </div>
+  </section>
+
+  <!-- CAPITULO 12 -->
+  <section id="cap12" class="page-break">
+    <h2>12. Timeouts, Quedas de Conexão & Engenharia de Caos (Toxiproxy)</h2>
+    <p>O <strong>Toxiproxy</strong> (Shopify) atua como proxy TCP intermediário, permitindo que a suíte Playwright altere condições de rede em tempo de execução para atestar a robustez do sistema frente a panes reais.</p>
+
+    <h3>12.1 Orquestração com Docker Compose</h3>
+    <div class="code-wrapper">
+      <div class="code-header"><span>docker-compose.yml</span><span>YAML</span></div>
+      <pre><code><span class="kw">version</span>: <span class="str">'3.8'</span>
+<span class="kw">services</span>:
+  <span class="kw">toxiproxy</span>:
+    <span class="kw">image</span>: <span class="str">ghcr.io/shopify/toxiproxy:2.11.0</span>
+    <span class="kw">container_name</span>: <span class="str">toxiproxy</span>
+    <span class="kw">ports</span>:
+      - <span class="str">"8474:8474"</span>           <span class="com"># API Administrativa</span>
+      - <span class="str">"8580-8590:8580-8590"</span> <span class="com"># Portas alocadas por worker Playwright</span>
+    <span class="kw">networks</span>:
+      - <span class="str">chaos-net</span>
+
+  <span class="kw">mock-acquirer</span>:
+    <span class="kw">image</span>: <span class="str">wiremock/wiremock:3.5.2</span>
+    <span class="kw">container_name</span>: <span class="str">mock-acquirer</span>
+    <span class="kw">ports</span>:
+      - <span class="str">"8080:8080"</span>
+    <span class="kw">networks</span>:
+      - <span class="str">chaos-net</span>
+
+<span class="kw">networks</span>:
+  <span class="kw">chaos-net</span>:
+    <span class="kw">driver</span>: <span class="str">bridge</span></code></pre>
+    </div>
+
+    <h3>12.2 Injeção de Latência com Assert de Timeout no Playwright</h3>
+    <div class="code-wrapper">
+      <div class="code-header"><span>tests/chaos/timeout-latency.spec.ts</span><span>TypeScript</span></div>
+      <pre><code><span class="kw">import</span> { <span class="var">test</span>, <span class="var">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="var">test</span>(<span class="str">'deve abortar requisição por timeout de 2s ao injetar 3500ms de latência no Toxiproxy'</span>, <span class="kw">async</span> ({
+  <span class="var">request</span>,
+}) <span class="op">=&gt;</span> {
+  <span class="com">// 1. Injeta toxic de latência na porta 8474 do Toxiproxy</span>
+  <span class="kw">await</span> <span class="var">request</span>.<span class="fn">post</span>(<span class="str">'http://localhost:8474/proxies/acquirer_proxy/toxics'</span>, {
+    <span class="var">data</span><span class="op">:</span> {
+      <span class="var">name</span><span class="op">:</span> <span class="str">'latency_downstream'</span>,
+      <span class="var">type</span><span class="op">:</span> <span class="str">'latency'</span>,
+      <span class="var">stream</span><span class="op">:</span> <span class="str">'downstream'</span>,
+      <span class="var">attributes</span><span class="op">:</span> { <span class="var">latency</span><span class="op">:</span> <span class="num">3500</span>, <span class="var">jitter</span><span class="op">:</span> <span class="num">50</span> },
+    },
+  });
+
+  <span class="kw">const</span> <span class="var">startTime</span> <span class="op">=</span> <span class="typ">Date</span>.<span class="fn">now</span>();
+  <span class="kw">let</span> <span class="var">timedOut</span> <span class="op">=</span> <span class="num">false</span>;
+
+  <span class="kw">try</span> {
+    <span class="kw">await</span> <span class="var">request</span>.<span class="fn">post</span>(<span class="str">'http://localhost:8580/v1/charges'</span>, {
+      <span class="var">data</span><span class="op">:</span> { <span class="var">amountInCents</span><span class="op">:</span> <span class="num">10000</span> },
+      <span class="var">timeout</span><span class="op">:</span> <span class="num">2000</span>, <span class="com">// Limite máximo aceito</span>
+    });
+  } <span class="kw">catch</span> (<span class="var">err</span><span class="op">:</span> <span class="typ">any</span>) {
+    <span class="var">timedOut</span> <span class="op">=</span> <span class="num">true</span>;
+    <span class="fn">expect</span>(<span class="var">err</span>.<span class="var">message</span>).<span class="fn">toMatch</span>(<span class="op">/</span><span class="str">timed out after 2000ms</span><span class="op">/</span>);
+  }
+
+  <span class="kw">const</span> <span class="var">duration</span> <span class="op">=</span> <span class="typ">Date</span>.<span class="fn">now</span>() <span class="op">-</span> <span class="var">startTime</span>;
+  <span class="fn">expect</span>(<span class="var">timedOut</span>).<span class="fn">toBe</span>(<span class="num">true</span>);
+  <span class="fn">expect</span>(<span class="var">duration</span>).<span class="fn">toBeGreaterThanOrEqual</span>(<span class="num">1950</span>);
+
+  <span class="com">// Limpeza do Toxic</span>
+  <span class="kw">await</span> <span class="var">request</span>.<span class="fn">delete</span>(<span class="str">'http://localhost:8474/proxies/acquirer_proxy/toxics/latency_downstream'</span>);
+});</code></pre>
+    </div>
+  </section>
+
+  <!-- CAPITULO 13 -->
+  <section id="cap13" class="page-break">
+    <h2>13. Pipeline de CI/CD no GitHub Actions</h2>
+
+    <h3>13.1 Pipeline de Execução Contínua</h3>
+    <div class="code-wrapper">
+      <div class="code-header"><span>.github/workflows/api-ci.yml</span><span>YAML</span></div>
+      <pre><code><span class="kw">name</span>: <span class="str">API Automation Pipeline</span>
+
+<span class="kw">on</span>:
+  <span class="kw">push</span>:
+    <span class="kw">branches</span>: [ <span class="str">main</span>, <span class="str">develop</span> ]
+  <span class="kw">pull_request</span>:
+    <span class="kw">branches</span>: [ <span class="str">main</span> ]
+
+<span class="kw">jobs</span>:
+  <span class="kw">test</span>:
+    <span class="kw">runs-on</span>: <span class="str">ubuntu-latest</span>
+    <span class="kw">timeout-minutes</span>: <span class="num">15</span>
+
+    <span class="kw">env</span>:
+      <span class="kw">API_BASE_URL</span>: <span class="str">${{ secrets.API_BASE_URL }}</span>
+      <span class="kw">CLIENT_ID</span>: <span class="str">${{ secrets.CLIENT_ID }}</span>
+      <span class="kw">CLIENT_SECRET</span>: <span class="str">${{ secrets.CLIENT_SECRET }}</span>
+      <span class="kw">DATABASE_URL</span>: <span class="str">${{ secrets.DATABASE_URL }}</span>
+
+    <span class="kw">steps</span>:
+      - <span class="kw">name</span>: <span class="str">Checkout Code</span>
+        <span class="kw">uses</span>: <span class="str">actions/checkout@v4</span>
+
+      - <span class="kw">name</span>: <span class="str">Setup Node.js 20</span>
+        <span class="kw">uses</span>: <span class="str">actions/setup-node@v4</span>
+        <span class="kw">with</span>:
+          <span class="kw">node-version</span>: <span class="num">20</span>
+          <span class="kw">cache</span>: <span class="str">'npm'</span>
+
+      - <span class="kw">name</span>: <span class="str">Install Dependencies</span>
+        <span class="kw">run</span>: <span class="str">npm ci</span>
+
+      - <span class="kw">name</span>: <span class="str">Typecheck Estrito & Lint</span>
+        <span class="kw">run</span>: |
+          npm run lint
+          npx tsc --noEmit
+
+      - <span class="kw">name</span>: <span class="str">Execute Playwright API Tests</span>
+        <span class="kw">run</span>: <span class="str">npx playwright test --workers=4</span>
+
+      - <span class="kw">name</span>: <span class="str">Upload Artifacts on Failure</span>
+        <span class="kw">if</span>: <span class="str">failure()</span>
+        <span class="kw">uses</span>: <span class="str">actions/upload-artifact@v4</span>
+        <span class="kw">with</span>:
+          <span class="kw">name</span>: <span class="str">playwright-report</span>
+          <span class="kw">path</span>: <span class="str">playwright-report/</span>
+          <span class="kw">retention-days</span>: <span class="num">14</span></code></pre>
+    </div>
+  </section>
+
+  <!-- CAPITULO 14 -->
+  <section id="cap14" class="page-break">
+    <h2>14. Kit de Sobrevivência Diário: Debug, Observabilidade & Banco Seguro</h2>
+    <p>Na rotina real de um QA Pleno em pagamentos, o console de testes locais é apenas o ponto de partida. Quando um bug ocorre em homologação ou produção, o erro raramente é evidente. Este capítulo entrega os métodos exatos de investigação e manipulação segura de dados no dia a dia.</p>
+
+    <h3>14.1 Observabilidade em Produção: Investigando Falhas Reais</h3>
+    <p>Quando um teste automatizado ou manual quebra, o time de engenharia não quer saber apenas que "falhou com 500". Você deve entregar o rastro exato do incidente utilizando ferramentas como Datadog, Kibana (OpenSearch) ou AWS CloudWatch.</p>
+
+    <h4>A. Como rastrear usando Correlation ID e Trace ID</h4>
+    <ol>
+      <li>Ao disparar um teste, copie o valor do cabeçalho <code>X-Correlation-ID</code> enviado ou o <code>id</code> da transação retornado.</li>
+      <li>Abra a ferramenta de logs (ex: Datadog / Kibana) e filtre pelo campo indexado:
+        <div class="code-wrapper">
+          <div class="code-header"><span>Kibana / Datadog Search Filter</span><span>Query</span></div>
+          <pre><code>correlation_id: "7a9e34b1-8409-42b8-9311-bfad6ce2e104" OR transaction_id: "d3b07384-d113-4f40-8b4e-e0ef3e120899"</code></pre>
+        </div>
+      </li>
+      <li>Você verá a árvore completa de microsserviços por onde a requisição passou: <em>API Gateway &rarr; Microsserviço de Autorização &rarr; Motor Antifraude &rarr; Adquirente Externa</em>.</li>
+      <li>Identifique onde a linha do log passou de <code>INFO</code> para <code>ERROR</code> ou <code>WARN</code>.</li>
+    </ol>
+
+    <h3>14.2 De-Para dos Códigos de Retorno das Adquirentes</h3>
+    <p>Quando a adquirente recusa uma transação, ela devolve um código bruto numérico. O gateway mapeia esse código para uma mensagem interna. Tenha esta tabela na sua mesa de trabalho para diagnosticar se a falha é do sistema ou da regra do cartão:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Código Bruto (Cielo / Rede / Stone)</th>
+          <th>Significado Oficial da Bandeira</th>
+          <th>Comportamento Esperado da API</th>
+          <th>Ação do QA</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>00</code> ou <code>000</code></td>
+          <td>Transação Aprovada com Sucesso.</td>
+          <td>Status <code>201 Created</code>, estado <code>AUTHORIZED</code>.</td>
+          <td>Caminho feliz validado.</td>
+        </tr>
+        <tr>
+          <td><code>05</code></td>
+          <td>Não Autorizada / Recusa Genérica pelo Banco Emissor.</td>
+          <td>Status <code>422</code>, código <code>TRANSACTION_DENIED</code>.</td>
+          <td>Validar se o motivo amigável não vaza dados sensíveis ao pagador.</td>
+        </tr>
+        <tr>
+          <td><code>51</code></td>
+          <td>Saldo Insuficiente (Limite estourado).</td>
+          <td>Status <code>422</code>, código <code>INSUFFICIENT_FUNDS</code>.</td>
+          <td>Validar tratamento do erro sem reprocessamento indevido.</td>
+        </tr>
+        <tr>
+          <td><code>57</code></td>
+          <td>Cartão Expirado ou Inválido para essa Operação.</td>
+          <td>Status <code>422</code>, código <code>EXPIRED_CARD</code>.</td>
+          <td>Verificar se a validação prévia de DTO barrou antes de chamar a ponta.</td>
+        </tr>
+        <tr>
+          <td><code>99</code> ou <code>999</code></td>
+          <td>Timeout de Infraestrutura / Adquirente Indisponível.</td>
+          <td>Status <code>504 Gateway Timeout</code> ou acionamento de Fallback.</td>
+          <td>Verificar se o Smart Routing chaveou para a adquirente secundária.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>14.3 Diretrizes de Segurança em Banco de Dados no Dia a Dia</h3>
+    <p>Como QA Pleno, você terá acesso a bancos de Staging (Homologação) e réplicas de Produção. Um comando errado pode parar a operação da empresa ou apagar registros contábeis. Siga rigorosamente estas regras:</p>
+
+    <div class="callout callout-danger">
+      <span class="callout-title">Regra de Ouro: Nunca execute UPDATE ou DELETE direto</span>
+      Em qualquer ambiente compartilhado, <strong>sempre</strong> abra uma transação manual explícita antes de rodar comandos de alteração. Isso permite inspecionar quantas linhas foram afetadas antes de confirmar.
+    </div>
+
+    <h4>Como alterar ou limpar dados de teste com segurança absoluta:</h4>
+    <div class="code-wrapper">
+      <div class="code-header"><span>Terminal / DBeaver SQL Script</span><span>SQL</span></div>
+      <pre><code><span class="com">-- 1. Inicie a transação manual</span>
+<span class="kw">BEGIN</span>;
+
+<span class="com">-- 2. Execute a alteração desejada</span>
+<span class="kw">UPDATE</span> <span class="typ">transactions</span> 
+<span class="kw">SET</span> <span class="var">status</span> <span class="op">=</span> <span class="str">'VOIDED'</span> 
+<span class="kw">WHERE</span> <span class="var">idempotency_key</span> <span class="op">=</span> <span class="str">'test-replay-uuid-881'</span>;
+
+<span class="com">-- 3. Verifique o resultado</span>
+<span class="kw">SELECT</span> <span class="var">id</span>, <span class="var">status</span>, <span class="var">amount_in_cents</span> 
+<span class="kw">FROM</span> <span class="typ">transactions</span> 
+<span class="kw">WHERE</span> <span class="var">idempotency_key</span> <span class="op">=</span> <span class="str">'test-replay-uuid-881'</span>;
+
+<span class="com">-- 4A. Se alterou APENAS o registro correto:</span>
+<span class="kw">COMMIT</span>; <span class="com">-- Grava a alteração definitivamente</span>
+
+<span class="com">-- 4B. Se você esqueceu o WHERE ou alterou mais de 1 linha por engano:</span>
+<span class="kw">ROLLBACK</span>; <span class="com">-- Desfaz TUDO imediatamente como se nada tivesse acontecido!</span></code></pre>
+    </div>
+
+    <ul>
+      <li><strong>Use Sempre a Read Replica:</strong> Para relatórios, extração de massa ou investigação de bugs, nunca conecte no banco principal de escrita (Master/Writer). Conecte na réplica de leitura (Reader) para não onerar o pool de transações dos clientes reais.</li>
+      <li><strong>Evite Lock de Tabelas:</strong> Consultas com <code>SELECT * FROM transactions</code> sem <code>LIMIT</code> em tabelas com milhões de linhas geram consumo excessivo de memória e travam threads no banco. Use sempre <code>LIMIT 50</code> e filtre por índices (ex: <code>created_at &gt;= CURRENT_DATE</code>).</li>
+    </ul>
+  </section>
+
+  <!-- CAPITULO 15 -->
+  <section id="cap15" class="page-break">
+    <h2>15. Auditoria de PRs, Gestão de Massa & Plano Tático de 60 Dias</h2>
+
+    <h3>15.1 O que Auditar nos Pull Requests (PRs) dos Desenvolvedores</h3>
+    <p>Um QA Pleno atua na prevenção de defeitos antes do merge em <code>develop</code> ou <code>main</code>. Ao ser marcado como revisor no GitHub/GitLab, busque ativamente por estas quatro vulnerabilidades recorrentes:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Ponto Crítico no Código</th>
+          <th>O que Procurar nos Arquivos Alterados</th>
+          <th>Risco Real em Produção</th>
+          <th>Comentário que Você Deve Fazer no PR</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Precisão de Moeda</strong></td>
+          <td>Variáveis tipadas como <code>number</code> no TypeScript ou <code>float/double</code> recebendo valores com vírgula (ex: <code>amount = 10.50</code>).</td>
+          <td>Quebra da norma IEEE 754 gerando centavos fantasmas e discrepâncias contábeis no fechamento do dia.</td>
+          <td><em>"Favor refatorar para utilizar valores inteiros em centavos (`amountInCents`) ou tipo Decimal exato para evitar erros de ponto flutuante."</em></td>
+        </tr>
+        <tr>
+          <td><strong>Concorrência / Saldo</strong></td>
+          <td>Métodos de débito de carteira fazendo apenas <code>SELECT saldo</code> seguido de <code>UPDATE saldo</code> sem lock.</td>
+          <td>Vulnerabilidade a <em>Double-Spending</em> via requisições simultâneas no mesmo milissegundo.</td>
+          <td><em>"Esta operação de débito precisa de lock pessimista (`SELECT FOR UPDATE`) ou lock distribuído via Redis para evitar race conditions."</em></td>
+        </tr>
+        <tr>
+          <td><strong>Timeouts em Clientes HTTP</strong></td>
+          <td>Instâncias de <code>axios</code>, <code>fetch</code> ou <code>got</code> chamando serviços externos sem propriedade <code>timeout</code> definida.</td>
+          <td>Se a adquirente sofrer instabilidade, as conexões ficam presas indefinidamente até derrubar os containers da API.</td>
+          <td><em>"Chamada externa sem timeout explícito configurado. Configurar timeout máximo de 5000ms com política de contingência."</em></td>
+        </tr>
+        <tr>
+          <td><strong>Logs e Segurança PCI-DSS</strong></td>
+          <td>Comandos <code>logger.info(req.body)</code> ou <code>console.log</code> gravando payloads brutos de entrada.</td>
+          <td>Vazamento de CVV ou PAN sem máscara nos logs do Datadog/CloudWatch, gerando não conformidade PCI e multas.</td>
+          <td><em>"O payload impresso nos logs contém dados abertos do cartão. Aplicar sanitização/mascaramento antes de registrar o log."</em></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>15.2 Pirâmide de Execução de Testes e Gestão de Massa</h3>
+    <p>Para manter a suíte de testes rápida e sem falsos-positivos (<em>flaky tests</em>), estruture a bateria em duas camadas distintas:</p>
+
+    <div class="diagram-box">CAMADA 1: Testes de PR (Fast Feedback - 2 a 4 minutos)
+├── Executados a cada commit / Pull Request no GitHub Actions
+├── Dependências externas 100% mockadas (WireMock ou Mocks locais em Node.js)
+└── Foco: Contratos (Zod), status codes, validações 400/422, cálculos de Split e regras de negócio
+
+CAMADA 2: Testes E2E de Staging / Homologação (15 a 30 minutos)
+├── Executados a cada deploy no ambiente de staging ou agendados de madrugada (Nightly)
+├── Comunicação real com Sandboxes de Adquirentes (Cielo, Stone) e SPI do Banco Central
+└── Foco: Transições de estado completas, reconciliação com PostgreSQL e latência real</div>
+
+    <h4>Gestão Saudável de Massa de Testes</h4>
+    <ul>
+      <li><strong>Geração Algorítmica de Cartões:</strong> Nunca utilize números estáticos em planilhas compartilhadas. Utilize geradores com o Algoritmo de Luhn que forneçam BINs aceitos pelo sandbox configurado.</li>
+      <li><strong>Teardown e Limpeza:</strong> Suas fixtures de teste de integração devem conter blocos de cancelamento (<code>afterEach</code> ou rotina dedicada) para cancelar pré-autorizações e expirar cobranças Pix abertas, evitando poluição visual nos dashboards compartilhados de homologação.</li>
+    </ul>
+
+    
+    <h3>15.3 Curso Prático: Roadmap e Evolução do QA Pleno</h3>
+    <p>Com base em feedbacks de estruturação, a abordagem de aprendizado não deve ser assimilar todas as tecnologias simultaneamente. O plano abaixo refina os 60 dias em um roadmap lógico de 8 níveis, garantindo base sólida antes de avançar para arquiteturas complexas.</p>
+
+    <div class="callout callout-warning">
+      <span class="callout-title">⭐ Etapa Permanente — Test Design</span>
+      Antes de automatizar, você deve saber quais testes deveriam existir. Para cada endpoint (ex: <code>POST /payments</code>), crie uma matriz contemplando: Happy path, Boundary, Negative, Auth, Authorization, State, Idempotency, Concurrency, Contract, Database, Security, Resilience e Integration. Só depois você automatiza.
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Nível</th>
+          <th>Foco do Aprendizado</th>
+          <th>Habilidades & Ferramentas Essenciais</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>🟢 NÍVEL 1</strong></td>
+          <td>Base Técnica</td>
+          <td>TypeScript, async/await, Promise, HTTP, JSON, REST, headers, status codes, autenticação e Git. <em>(Sem isso, não avance).</em></td>
+        </tr>
+        <tr>
+          <td><strong>🟢 NÍVEL 2</strong></td>
+          <td>Playwright API</td>
+          <td>Domínio dos métodos (<code>get</code>, <code>post</code>, etc.), assertions, fixtures, variáveis de ambiente, retries, parallelism e reports.</td>
+        </tr>
+        <tr>
+          <td><strong>🟡 NÍVEL 3</strong></td>
+          <td>Arquitetura</td>
+          <td>Design Patterns: <code>Service Object &rarr; Fixture &rarr; Factory &rarr; DTO &rarr; Schema</code>. Saber responder por que uma classe existe e como evitar duplicação.</td>
+        </tr>
+        <tr>
+          <td><strong>🟠 NÍVEL 4</strong></td>
+          <td>API Testing Avançado</td>
+          <td>Comportamento esperado por status (não apenas 200), boundary testing, transições de estado, idempotência e testes de fluxo (ex: Criar &rarr; Capturar &rarr; Estornar).</td>
+        </tr>
+        <tr>
+          <td><strong>🔴 NÍVEL 5</strong></td>
+          <td>Banco de Dados</td>
+          <td>PostgreSQL: Operações básicas (SELECT, JOIN), constraints, transactions, ACID. Garantir que a API retornou 201 e o banco está consistente.</td>
+        </tr>
+        <tr>
+          <td><strong>🔴 NÍVEL 6</strong></td>
+          <td>Contract Testing</td>
+          <td>Zod, JSON Schema e OpenAPI. Compreender a diferença entre validação TypeScript (compilação) e runtime.</td>
+        </tr>
+        <tr>
+          <td><strong>🔴 NÍVEL 7</strong></td>
+          <td>CI/CD</td>
+          <td>GitHub Actions: Pull Request, Lint, Typecheck, API Tests, Reports, Artifacts e gestão de Secrets.</td>
+        </tr>
+        <tr>
+          <td><strong>🟣 NÍVEL 8</strong></td>
+          <td>Complexidades Reais</td>
+          <td>Webhooks (HMAC, fora de ordem), Resiliência (Toxiproxy, retries), Docker, Observabilidade (Logs, Trace ID, Datadog) e Segurança (OWASP API Top 10).</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+
+</div>
+
+</body>
+</html>
